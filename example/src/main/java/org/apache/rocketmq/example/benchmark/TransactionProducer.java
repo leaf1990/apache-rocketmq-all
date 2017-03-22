@@ -17,6 +17,12 @@
 
 package org.apache.rocketmq.example.benchmark;
 
+import org.apache.rocketmq.client.exception.MQClientException;
+import org.apache.rocketmq.client.producer.*;
+import org.apache.rocketmq.common.message.Message;
+import org.apache.rocketmq.common.message.MessageExt;
+import org.apache.rocketmq.remoting.common.RemotingHelper;
+
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.Timer;
@@ -24,15 +30,6 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
-import org.apache.rocketmq.client.exception.MQClientException;
-import org.apache.rocketmq.client.producer.LocalTransactionExecuter;
-import org.apache.rocketmq.client.producer.LocalTransactionState;
-import org.apache.rocketmq.client.producer.SendResult;
-import org.apache.rocketmq.client.producer.TransactionCheckListener;
-import org.apache.rocketmq.client.producer.TransactionMQProducer;
-import org.apache.rocketmq.common.message.Message;
-import org.apache.rocketmq.common.message.MessageExt;
-import org.apache.rocketmq.remoting.common.RemotingHelper;
 
 public class TransactionProducer {
     private static int threadCount;
@@ -41,7 +38,7 @@ public class TransactionProducer {
     private static boolean ischeckffalse;
 
     public static void main(String[] args) throws MQClientException, UnsupportedEncodingException {
-        threadCount = args.length >= 1 ? Integer.parseInt(args[0]) : 32;
+        threadCount = args.length >= 1 ? Integer.parseInt(args[0]) : 3;
         messageSize = args.length >= 2 ? Integer.parseInt(args[1]) : 1024 * 2;
         ischeck = args.length >= 3 && Boolean.parseBoolean(args[2]);
         ischeckffalse = args.length >= 4 && Boolean.parseBoolean(args[3]);
@@ -95,6 +92,7 @@ public class TransactionProducer {
         final TransactionCheckListener transactionCheckListener =
             new TransactionCheckListenerBImpl(ischeckffalse, statsBenchmark);
         final TransactionMQProducer producer = new TransactionMQProducer("benchmark_transaction_producer");
+        producer.setNamesrvAddr("127.0.0.1:9876");
         producer.setInstanceName(Long.toString(System.currentTimeMillis()));
         producer.setTransactionCheckListener(transactionCheckListener);
         producer.setDefaultTopicQueueNums(1000);

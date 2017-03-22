@@ -31,6 +31,11 @@ public class DispatchRequest {
     private final int sysFlag;
     private final long preparedTransactionOffset;
 
+    /**
+     * for transaction
+     */
+    private final String producerGroup;
+
     public DispatchRequest(
         final String topic,
         final int queueId,
@@ -42,7 +47,8 @@ public class DispatchRequest {
         final String keys,
         final String uniqKey,
         final int sysFlag,
-        final long preparedTransactionOffset
+        final long preparedTransactionOffset,
+        final String producerGroup
     ) {
         this.topic = topic;
         this.queueId = queueId;
@@ -57,6 +63,8 @@ public class DispatchRequest {
         this.sysFlag = sysFlag;
         this.preparedTransactionOffset = preparedTransactionOffset;
         this.success = true;
+
+        this.producerGroup = producerGroup;
     }
 
     public DispatchRequest(int size) {
@@ -81,6 +89,8 @@ public class DispatchRequest {
         this.sysFlag = 0;
         this.preparedTransactionOffset = 0;
         this.success = false;
+
+        this.producerGroup = null;
     }
 
     public DispatchRequest(int size, boolean success) {
@@ -105,6 +115,8 @@ public class DispatchRequest {
         this.sysFlag = 0;
         this.preparedTransactionOffset = 0;
         this.success = success;
+
+        this.producerGroup = null;
     }
 
     public String getTopic() {
@@ -155,4 +167,7 @@ public class DispatchRequest {
         return uniqKey;
     }
 
+    public String getProducerGroup() {
+        return producerGroup;
+    }
 }

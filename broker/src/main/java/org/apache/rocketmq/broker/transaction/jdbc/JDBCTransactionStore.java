@@ -17,22 +17,19 @@
 
 package org.apache.rocketmq.broker.transaction.jdbc;
 
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicLong;
 import org.apache.rocketmq.broker.transaction.TransactionRecord;
 import org.apache.rocketmq.broker.transaction.TransactionStore;
 import org.apache.rocketmq.common.MixAll;
 import org.apache.rocketmq.common.constant.LoggerName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URL;
+import java.sql.*;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class JDBCTransactionStore implements TransactionStore {
     private static final Logger log = LoggerFactory.getLogger(LoggerName.TRANSACTION_LOGGER_NAME);
@@ -159,7 +156,7 @@ public class JDBCTransactionStore implements TransactionStore {
     }
 
     @Override
-    public boolean put(List<TransactionRecord> trs) {
+    public boolean put(Set<TransactionRecord> trs) {
         PreparedStatement statement = null;
         try {
             this.connection.setAutoCommit(false);
@@ -197,7 +194,7 @@ public class JDBCTransactionStore implements TransactionStore {
     }
 
     @Override
-    public void remove(List<Long> pks) {
+    public void remove(Set<Long> pks) {
         PreparedStatement statement = null;
         try {
             this.connection.setAutoCommit(false);
@@ -223,20 +220,5 @@ public class JDBCTransactionStore implements TransactionStore {
     @Override
     public List<TransactionRecord> traverse(long pk, int nums) {
         return null;
-    }
-
-    @Override
-    public long totalRecords() {
-        return this.totalRecordsValue.get();
-    }
-
-    @Override
-    public long minPK() {
-        return 0;
-    }
-
-    @Override
-    public long maxPK() {
-        return 0;
     }
 }

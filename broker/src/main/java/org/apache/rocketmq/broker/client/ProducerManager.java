@@ -16,19 +16,22 @@
  */
 package org.apache.rocketmq.broker.client;
 
+import com.google.common.collect.Lists;
 import io.netty.channel.Channel;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import org.apache.rocketmq.common.constant.LoggerName;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
 import org.apache.rocketmq.remoting.common.RemotingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ProducerManager {
     private static final Logger log = LoggerFactory.getLogger(LoggerName.BROKER_LOGGER_NAME);
@@ -184,5 +187,25 @@ public class ProducerManager {
         } catch (InterruptedException e) {
             log.error("", e);
         }
+    }
+
+    public List<ClientChannelInfo> getClientChannelInfo(String producerGroupName) {
+        try {
+            if (this.groupChannelLock.tryLock(LOCK_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)) {
+                try {
+                    Map<Channel, ClientChannelInfo> channelInfoMap = this.getGroupChannelTable().get(producerGroupName);
+
+                    if (channelInfoMap != null && !channelInfoMap.isEmpty()) {
+                        return Lists.newArrayList(channelInfoMap.values());
+                    }
+                } finally {
+                    this.groupChannelLock.unlock();
+                }
+            }
+        } catch (InterruptedException e) {
+            log.error("", e);
+        }
+
+        return Lists.newArrayList();
     }
 }

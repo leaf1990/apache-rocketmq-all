@@ -16,7 +16,8 @@
 -- specific language governing permissions and limitations
 -- under the License.
 --
-CREATE TABLE t_transaction(
-	offset				NUMERIC(20) PRIMARY KEY,
-	producerGroup		VARCHAR(64)
+CREATE TABLE IF not EXISTS transaction_log (
+	offset				NUMERIC(20) not null PRIMARY KEY,
+	producer_group		VARCHAR(64) not null,
+	gmt_create datetime not null
 )

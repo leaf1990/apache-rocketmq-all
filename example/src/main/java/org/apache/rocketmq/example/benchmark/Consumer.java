@@ -17,11 +17,6 @@
 
 package org.apache.rocketmq.example.benchmark;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -33,6 +28,12 @@ import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.srvutil.ServerUtil;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Consumer {
 
@@ -97,6 +98,7 @@ public class Consumer {
         }, 10000, 10000);
 
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(group);
+        consumer.setNamesrvAddr("127.0.0.1:9876");
         consumer.setInstanceName(Long.toString(System.currentTimeMillis()));
 
         consumer.subscribe(topic, "*");

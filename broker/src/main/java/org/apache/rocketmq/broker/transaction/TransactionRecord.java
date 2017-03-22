@@ -17,10 +17,24 @@
 
 package org.apache.rocketmq.broker.transaction;
 
+import java.sql.Timestamp;
+
 public class TransactionRecord {
     // Commit Log Offset
     private long offset;
+
     private String producerGroup;
+
+    private Timestamp gmtCreate;
+
+    public TransactionRecord() {
+    }
+
+    public TransactionRecord(long offset, String producerGroup, Timestamp gmtCreate) {
+        this.offset = offset;
+        this.producerGroup = producerGroup;
+        this.gmtCreate = gmtCreate;
+    }
 
     public long getOffset() {
         return offset;
@@ -36,5 +50,28 @@ public class TransactionRecord {
 
     public void setProducerGroup(String producerGroup) {
         this.producerGroup = producerGroup;
+    }
+
+    public Timestamp getGmtCreate() {
+        return gmtCreate;
+    }
+
+    public void setGmtCreate(Timestamp gmtCreate) {
+        this.gmtCreate = gmtCreate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TransactionRecord that = (TransactionRecord) o;
+
+        return offset == that.offset;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (offset ^ (offset >>> 32));
     }
 }

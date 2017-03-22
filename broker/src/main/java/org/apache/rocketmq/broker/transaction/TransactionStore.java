@@ -18,21 +18,17 @@
 package org.apache.rocketmq.broker.transaction;
 
 import java.util.List;
+import java.util.Set;
 
 public interface TransactionStore {
+
     boolean open();
 
     void close();
 
-    boolean put(final List<TransactionRecord> trs);
+    boolean put(final Set<TransactionRecord> trs);
 
-    void remove(final List<Long> pks);
+    void remove(final Set<Long> pks);
 
     List<TransactionRecord> traverse(final long pk, final int nums);
-
-    long totalRecords();
-
-    long minPK();
-
-    long maxPK();
 }
