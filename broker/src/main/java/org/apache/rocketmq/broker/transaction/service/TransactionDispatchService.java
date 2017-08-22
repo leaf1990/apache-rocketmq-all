@@ -37,10 +37,6 @@ public class TransactionDispatchService extends ServiceThread {
 
     private volatile ConcurrentMap<String, List<DispatchRequest>> producerToRequestMapWrite = new ConcurrentHashMap<>();
 
-    private volatile long storeTimestampRead = 0;
-
-    private volatile long storeTimeStampWrite = 0;
-
     public TransactionDispatchService(BrokerController brokerController, DefaultMessageStore defaultMessageStore) {
         this.defaultMessageStore = defaultMessageStore;
         this.executorService = Executors.newFixedThreadPool(defaultMessageStore.getMessageStoreConfig().getTransactionAsyncPoolSize(),
@@ -50,18 +46,6 @@ public class TransactionDispatchService extends ServiceThread {
     }
 
     public void putRequest(DispatchRequest request) {
-        final int tranType = MessageSysFlag.getTransactionValue(request.getSysFlag());
-        if (MessageSysFlag.TRANSACTION_NOT_TYPE == tranType) {
-            // TODO something is wrong? ...
-            if (producerToRequestMapRead.isEmpty() && producerToRequestMapWrite.isEmpty()) {
-                defaultMessageStore.getStoreCheckpoint().setTransactionTimestamp(request.getStoreTimestamp());
-            }
-
-            return;
-        }
-
-        storeTimeStampWrite = request.getStoreTimestamp();
-
         String producerGroup = request.getProducerGroup();
         int transactionLogAccumulateSize = defaultMessageStore.getMessageStoreConfig().getTransactionLogAccumulateSize();
 
@@ -76,6 +60,9 @@ public class TransactionDispatchService extends ServiceThread {
                 }
             } else {
                 requests.add(request);
+
+                // 如果有消息，需要唤起处理线程
+                this.wakeup();
 
                 break;
             }
@@ -125,14 +112,13 @@ public class TransactionDispatchService extends ServiceThread {
         ConcurrentMap<String, List<DispatchRequest>> tmp = this.producerToRequestMapWrite;
         this.producerToRequestMapWrite = this.producerToRequestMapRead;
         this.producerToRequestMapRead = tmp;
-
-        this.storeTimestampRead = this.storeTimeStampWrite;
     }
 
     private void doDispatch() {
         if (producerToRequestMapRead.isEmpty()) return;
 
         List<CompletableFuture<Void>> futures = new ArrayList<>();
+        long transactionTimestamp = 0;
         for (String producerGroup : producerToRequestMapRead.keySet()) {
             List<DispatchRequest> dispatchRequests = producerToRequestMapRead.remove(producerGroup);
             if (dispatchRequests == null || dispatchRequests.isEmpty()) continue;
@@ -140,8 +126,12 @@ public class TransactionDispatchService extends ServiceThread {
             Set<TransactionRecord> prepare = new HashSet<>();
             Set<Long> rollbackOrCommit = new HashSet<>();
             for (DispatchRequest request : dispatchRequests) {
-                final int tranType = MessageSysFlag.getTransactionValue(request.getSysFlag());
+                // 记录该批数据最大的存储时间，当事务消息持久化完，需要记录对应的checkpoint
+                if (request.getStoreTimestamp() > transactionTimestamp) {
+                    transactionTimestamp = request.getStoreTimestamp();
+                }
 
+                final int tranType = MessageSysFlag.getTransactionValue(request.getSysFlag());
                 switch (tranType) {
                     case MessageSysFlag.TRANSACTION_NOT_TYPE:
                         break;
@@ -176,8 +166,8 @@ public class TransactionDispatchService extends ServiceThread {
             completableFuture.join();
         }
 
-        if (this.storeTimestampRead != 0) {
-            defaultMessageStore.getStoreCheckpoint().setTransactionTimestamp(storeTimestampRead);
+        if (transactionTimestamp > 0) {
+            defaultMessageStore.getStoreCheckpoint().setTransactionTimestamp(transactionTimestamp);
         }
     }
 
@@ -202,7 +192,7 @@ public class TransactionDispatchService extends ServiceThread {
                 log.error("run fail: ", e);
 
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e1) {
                     log.warn("exception: ", e1);
                 }
