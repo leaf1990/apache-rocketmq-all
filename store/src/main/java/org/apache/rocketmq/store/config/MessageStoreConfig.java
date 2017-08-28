@@ -141,7 +141,7 @@ public class MessageStoreConfig {
     private String transactionStoreType = "NONE";
     private int checkScheduleIntervalSeconds = 2;
     private int checkPageSize = 20;
-    private int checkTransactionLogMinutesBefore = 2;
+    private int checkTransactionLogSecondsBefore = 20;
 
     /**
      * TDDL config
@@ -687,12 +687,12 @@ public class MessageStoreConfig {
         this.checkPageSize = checkPageSize;
     }
 
-    public int getCheckTransactionLogMinutesBefore() {
-        return checkTransactionLogMinutesBefore;
+    public int getCheckTransactionLogSecondsBefore() {
+        return checkTransactionLogSecondsBefore;
     }
 
-    public void setCheckTransactionLogMinutesBefore(int checkTransactionLogMinutesBefore) {
-        this.checkTransactionLogMinutesBefore = checkTransactionLogMinutesBefore;
+    public void setCheckTransactionLogSecondsBefore(int checkTransactionLogSecondsBefore) {
+        this.checkTransactionLogSecondsBefore = checkTransactionLogSecondsBefore;
     }
 
     public String getAppName() {

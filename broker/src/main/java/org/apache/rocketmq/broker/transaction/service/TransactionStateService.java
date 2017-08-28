@@ -58,13 +58,13 @@ public class TransactionStateService {
                 TimeUnit.SECONDS);
     }
 
-    private static boolean recordTooOld(TransactionRecord transactionRecord, int checkMinutesBefore) {
-        return transactionRecord.getGmtCreate().before(DateUtils.addMinutes(new Date(), -checkMinutesBefore));
+    private static boolean recordTooOld(TransactionRecord transactionRecord, int checkSecondsBefore) {
+        return transactionRecord.getGmtCreate().before(DateUtils.addSeconds(new Date(), -checkSecondsBefore));
     }
 
     private void doSchedule() {
         boolean slave = messageStore.getMessageStoreConfig().getBrokerRole() == BrokerRole.SLAVE;
-        int checkMinutesBefore = messageStore.getMessageStoreConfig().getCheckTransactionLogMinutesBefore();
+        int checkSecondsBefore = messageStore.getMessageStoreConfig().getCheckTransactionLogSecondsBefore();
 
         if (slave) {
             return;
@@ -81,7 +81,7 @@ public class TransactionStateService {
             }
 
             for (TransactionRecord transactionRecord : transactionRecords) {
-                if (!recordTooOld(transactionRecord, checkMinutesBefore)) {
+                if (!recordTooOld(transactionRecord, checkSecondsBefore)) {
                     finished = true;
                     break;
                 }
