@@ -80,7 +80,7 @@ public class TransactionDispatchService extends ServiceThread {
 
         while (!this.isStopped()) {
             try {
-                this.waitForRunning(0);
+                this.waitForRunning(1000);
                 this.doDispatch();
             } catch (Exception e) {
                 log.warn(this.getServiceName() + " service has exception. ", e);
