@@ -1,5 +1,6 @@
 package org.apache.rocketmq.broker.transaction.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.broker.BrokerController;
 import org.apache.rocketmq.broker.transaction.TransactionRecord;
 import org.apache.rocketmq.broker.transaction.TransactionStore;
@@ -25,6 +26,8 @@ public class TransactionDispatchService extends ServiceThread {
 
     private static final Logger log = LoggerFactory.getLogger(LoggerName.TRANSACTION_LOGGER_NAME);
 
+    private static final String DUMMY_PRODUCER_GROUP = "_dummy_producer_group";
+
     private DefaultMessageStore defaultMessageStore;
 
     private TransactionStore transactionStore;
@@ -47,6 +50,10 @@ public class TransactionDispatchService extends ServiceThread {
 
     public void putRequest(DispatchRequest request) {
         String producerGroup = request.getProducerGroup();
+        if (StringUtils.isBlank(producerGroup)) {
+            producerGroup = DUMMY_PRODUCER_GROUP;
+        }
+
         int transactionLogAccumulateSize = defaultMessageStore.getMessageStoreConfig().getTransactionLogAccumulateSize();
 
         do {
