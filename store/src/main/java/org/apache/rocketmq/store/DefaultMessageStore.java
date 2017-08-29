@@ -1280,7 +1280,7 @@ public class DefaultMessageStore implements MessageStore {
             DefaultMessageStore.this.indexService.buildIndex(req);
         }
 
-        if (this.transactionLogPersistListener != null) {
+        if (this.transactionLogPersistListener != null && BrokerRole.SLAVE != DefaultMessageStore.this.getMessageStoreConfig().getBrokerRole()) {
             this.transactionLogPersistListener.persist(req);
         }
     }
