@@ -48,18 +48,25 @@ public class TransactionStateService {
     public void start() {
         scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryImpl("TransactionCheckSchedule"));
 
-        initScheduleTask();
+        doScheduleTask();
     }
 
-    private void initScheduleTask() {
-        scheduledExecutorService.scheduleWithFixedDelay(this::doSchedule,
-                60,
+    private void doScheduleTask() {
+        scheduledExecutorService.schedule(this::doScheduleWrapper,
                 messageStore.getMessageStoreConfig().getCheckScheduleIntervalSeconds(),
                 TimeUnit.SECONDS);
     }
 
     private static boolean recordTooOld(TransactionRecord transactionRecord, int checkSecondsBefore) {
         return transactionRecord.getGmtCreate().before(DateUtils.addSeconds(new Date(), -checkSecondsBefore));
+    }
+
+    private void doScheduleWrapper() {
+        try {
+            doSchedule();
+        } finally {
+            doScheduleTask();
+        }
     }
 
     private void doSchedule() {
