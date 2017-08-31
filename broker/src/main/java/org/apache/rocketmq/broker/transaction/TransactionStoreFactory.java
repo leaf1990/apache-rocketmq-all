@@ -43,6 +43,11 @@ public class TransactionStoreFactory {
         }
 
         @Override
+        public boolean computeTotalRecords() {
+            return false;
+        }
+
+        @Override
         public void close() {
 
         }
@@ -60,6 +65,21 @@ public class TransactionStoreFactory {
         @Override
         public List<TransactionRecord> traverse(long pk, int nums) {
             return Collections.emptyList();
+        }
+
+        @Override
+        public long totalRecords() {
+            return 0;
+        }
+
+        @Override
+        public long minPK() {
+            return 0;
+        }
+
+        @Override
+        public long maxPK() {
+            return 0;
         }
     }
 }
