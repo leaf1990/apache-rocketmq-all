@@ -142,7 +142,7 @@ public class MessageStoreConfig {
     private int checkScheduleIntervalSeconds = 10;
     private int checkPageSize = 20;
     private int checkTransactionLogSecondsBefore = 120;
-    private int dbTransactionLogAccumulateSize = 5000;
+    private int dbTransactionLogAccumulateSize = 2000;
 
     /**
      * TDDL config

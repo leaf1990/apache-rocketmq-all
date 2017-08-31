@@ -23,6 +23,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by diwayou on 17-3-17.
@@ -40,6 +41,8 @@ public class TransactionStateService {
     private ScheduledExecutorService scheduledExecutorService;
 
     private volatile long lastMaxOffset = 0;
+
+    private AtomicBoolean forceCheck = new AtomicBoolean(false);
 
     public TransactionStateService(BrokerController brokerController, DefaultMessageStore messageStore, TransactionStore transactionStore) {
         this.brokerController = brokerController;
@@ -80,11 +83,16 @@ public class TransactionStateService {
             return Integer.MAX_VALUE; // 暂时默认最大的int，后续主备auto failover的时候再做处理
         }
 
-        long delaySeconds = transactionLogAccumulateTooMuch();
-        if (delaySeconds > 0) {
-            log.warn("事务消息堆积过多，稍后再进行check回调操作!");
-            return delaySeconds;
+        if (!forceCheck.get()) {
+            long delaySeconds = transactionLogAccumulateTooMuch();
+            if (delaySeconds > 0) {
+                log.warn("事务消息堆积过多，稍后再进行check回调操作!");
+                forceCheck.set(true);
+
+                return delaySeconds;
+            }
         }
+        forceCheck.set(false);
 
         int pageSize = messageStore.getMessageStoreConfig().getCheckPageSize();
         Map<String, List<ClientChannelInfo>> clientsCache = Maps.newHashMap();
