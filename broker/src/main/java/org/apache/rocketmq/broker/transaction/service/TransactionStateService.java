@@ -50,12 +50,12 @@ public class TransactionStateService {
     public void start() {
         scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryImpl("TransactionCheckSchedule"));
 
-        doScheduleTask();
+        doScheduleTask(messageStore.getMessageStoreConfig().getCheckScheduleIntervalSeconds() + 60);
     }
 
-    private void doScheduleTask() {
+    private void doScheduleTask(long delaySeconds) {
         scheduledExecutorService.schedule(this::doScheduleWrapper,
-                messageStore.getMessageStoreConfig().getCheckScheduleIntervalSeconds(),
+                delaySeconds,
                 TimeUnit.SECONDS);
     }
 
@@ -64,24 +64,26 @@ public class TransactionStateService {
     }
 
     private void doScheduleWrapper() {
+        long delaySeconds = messageStore.getMessageStoreConfig().getCheckScheduleIntervalSeconds();
         try {
-            doSchedule();
+            delaySeconds = doSchedule();
         } finally {
-            doScheduleTask();
+            doScheduleTask(delaySeconds);
         }
     }
 
-    private void doSchedule() {
+    private long doSchedule() {
         boolean slave = messageStore.getMessageStoreConfig().getBrokerRole() == BrokerRole.SLAVE;
         int checkSecondsBefore = messageStore.getMessageStoreConfig().getCheckTransactionLogSecondsBefore();
 
         if (slave) {
-            return;
+            return Integer.MAX_VALUE; // 暂时默认最大的int，后续主备auto failover的时候再做处理
         }
 
-        if (transactionLogAccumulateTooMuch()) {
+        long delaySeconds = transactionLogAccumulateTooMuch();
+        if (delaySeconds > 0) {
             log.warn("事务消息堆积过多，稍后再进行check回调操作!");
-            return;
+            return delaySeconds;
         }
 
         int pageSize = messageStore.getMessageStoreConfig().getCheckPageSize();
@@ -118,14 +120,23 @@ public class TransactionStateService {
 
             offsetBegin = transactionRecords.get(transactionRecords.size() - 1).getOffset();
         } while (!finished);
+
+        return messageStore.getMessageStoreConfig().getCheckScheduleIntervalSeconds();
     }
 
-    private boolean transactionLogAccumulateTooMuch() {
+    private long transactionLogAccumulateTooMuch() {
         long curMinPk = transactionStore.minPK();
+        long lastTotal = transactionStore.totalRecords();
         transactionStore.computeTotalRecords();
         long curTotal = transactionStore.totalRecords();
+        int dbTransactionLogAccumulateSize = messageStore.getMessageStoreConfig().getDbTransactionLogAccumulateSize();
 
-        return curMinPk < lastMaxOffset && curTotal > messageStore.getMessageStoreConfig().getDbTransactionLogAccumulateSize();
+        boolean needDelay = curMinPk < lastMaxOffset && curTotal > dbTransactionLogAccumulateSize;
+
+        if (!needDelay) return 0;
+
+        return Math.max(messageStore.getMessageStoreConfig().getCheckScheduleIntervalSeconds(),
+                lastTotal / dbTransactionLogAccumulateSize);
     }
 
     private void checkTransactionRecord(TransactionRecord transactionRecord, List<ClientChannelInfo> clientChannelInfoList) {
