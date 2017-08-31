@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by diwayou on 17-3-16.
@@ -31,6 +32,8 @@ public class TddlTransactionStore implements TransactionStore {
     private MessageStoreConfig config;
 
     private TGroupDataSource dataSource;
+
+    private AtomicLong totalRecordsValue = new AtomicLong(0);
 
     public TddlTransactionStore(MessageStoreConfig config) {
         this.config = config;
@@ -175,5 +178,68 @@ public class TddlTransactionStore implements TransactionStore {
                 log.debug("Unexpected exception on closing JDBC Connection", e);
             }
         }
+    }
+
+    @Override
+    public long totalRecords() {
+        return this.totalRecordsValue.get();
+    }
+
+    @Override
+    public long minPK() {
+        Statement statement = null;
+        Connection connection = null;
+        ResultSet resultSet = null;
+        try {
+            connection = dataSource.getConnection();
+            statement = connection.createStatement();
+
+            resultSet = statement.executeQuery("select min(offset) as minOffset from transaction_log");
+            if (!resultSet.next()) {
+                log.warn("minPK ResultSet is empty");
+                return 0;
+            }
+
+            return resultSet.getLong(1);
+        } catch (Exception e) {
+            log.warn("computeTotalRecords Exception", e);
+            return 0;
+        } finally {
+            closeResultSet(resultSet);
+            closeStatement(statement);
+            closeConnection(connection);
+        }
+    }
+
+    @Override
+    public long maxPK() {
+        return 0;
+    }
+
+    public boolean computeTotalRecords() {
+        Statement statement = null;
+        Connection connection = null;
+        ResultSet resultSet = null;
+        try {
+            connection = dataSource.getConnection();
+            statement = connection.createStatement();
+
+            resultSet = statement.executeQuery("select count(offset) as total from transaction_log");
+            if (!resultSet.next()) {
+                log.warn("computeTotalRecords ResultSet is empty");
+                return false;
+            }
+
+            this.totalRecordsValue.set(resultSet.getLong(1));
+        } catch (Exception e) {
+            log.warn("computeTotalRecords Exception", e);
+            return false;
+        } finally {
+            closeResultSet(resultSet);
+            closeStatement(statement);
+            closeConnection(connection);
+        }
+
+        return true;
     }
 }

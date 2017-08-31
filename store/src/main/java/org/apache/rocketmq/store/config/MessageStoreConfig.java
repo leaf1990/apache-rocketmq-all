@@ -139,9 +139,10 @@ public class MessageStoreConfig {
     private int transactionLogAccumulateSize = 100000;
     private int transactionAsyncPoolSize = Runtime.getRuntime().availableProcessors() * 2;
     private String transactionStoreType = "NONE";
-    private int checkScheduleIntervalSeconds = 2;
+    private int checkScheduleIntervalSeconds = 10;
     private int checkPageSize = 20;
-    private int checkTransactionLogSecondsBefore = 20;
+    private int checkTransactionLogSecondsBefore = 120;
+    private int dbTransactionLogAccumulateSize = 5000;
 
     /**
      * TDDL config
@@ -693,6 +694,14 @@ public class MessageStoreConfig {
 
     public void setCheckTransactionLogSecondsBefore(int checkTransactionLogSecondsBefore) {
         this.checkTransactionLogSecondsBefore = checkTransactionLogSecondsBefore;
+    }
+
+    public int getDbTransactionLogAccumulateSize() {
+        return dbTransactionLogAccumulateSize;
+    }
+
+    public void setDbTransactionLogAccumulateSize(int dbTransactionLogAccumulateSize) {
+        this.dbTransactionLogAccumulateSize = dbTransactionLogAccumulateSize;
     }
 
     public String getAppName() {

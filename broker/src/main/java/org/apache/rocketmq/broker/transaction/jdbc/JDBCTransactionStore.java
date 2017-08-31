@@ -80,7 +80,8 @@ public class JDBCTransactionStore implements TransactionStore {
         return false;
     }
 
-    private boolean computeTotalRecords() {
+    @Override
+    public boolean computeTotalRecords() {
         Statement statement = null;
         ResultSet resultSet = null;
         try {
@@ -220,5 +221,20 @@ public class JDBCTransactionStore implements TransactionStore {
     @Override
     public List<TransactionRecord> traverse(long pk, int nums) {
         return null;
+    }
+
+    @Override
+    public long totalRecords() {
+        return this.totalRecordsValue.get();
+    }
+
+    @Override
+    public long minPK() {
+        return 0;
+    }
+
+    @Override
+    public long maxPK() {
+        return 0;
     }
 }

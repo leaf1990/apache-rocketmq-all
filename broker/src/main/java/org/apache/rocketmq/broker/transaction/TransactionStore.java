@@ -24,6 +24,8 @@ public interface TransactionStore {
 
     boolean open();
 
+    boolean computeTotalRecords();
+
     void close();
 
     boolean put(final Set<TransactionRecord> trs);
@@ -31,4 +33,15 @@ public interface TransactionStore {
     void remove(final Set<Long> pks);
 
     List<TransactionRecord> traverse(final long pk, final int nums);
+
+    /**
+     * 上次计算的记录总数
+     *
+     * @return
+     */
+    long totalRecords();
+
+    long minPK();
+
+    long maxPK();
 }

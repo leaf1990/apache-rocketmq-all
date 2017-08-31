@@ -39,6 +39,8 @@ public class TransactionStateService {
 
     private ScheduledExecutorService scheduledExecutorService;
 
+    private volatile long lastMaxOffset = 0;
+
     public TransactionStateService(BrokerController brokerController, DefaultMessageStore messageStore, TransactionStore transactionStore) {
         this.brokerController = brokerController;
         this.messageStore = messageStore;
@@ -77,6 +79,11 @@ public class TransactionStateService {
             return;
         }
 
+        if (transactionLogAccumulateTooMuch()) {
+            log.warn("事务消息堆积过多，稍后再进行check回调操作!");
+            return;
+        }
+
         int pageSize = messageStore.getMessageStoreConfig().getCheckPageSize();
         Map<String, List<ClientChannelInfo>> clientsCache = Maps.newHashMap();
         long offsetBegin = 0;
@@ -100,6 +107,9 @@ public class TransactionStateService {
                 } catch (Exception e) {
                     log.warn("check fail: ", e);
                 }
+
+                // 记录check过的数据的最大offset
+                lastMaxOffset = transactionRecord.getOffset();
             }
 
             if (transactionRecords.size() < pageSize) {
@@ -108,6 +118,14 @@ public class TransactionStateService {
 
             offsetBegin = transactionRecords.get(transactionRecords.size() - 1).getOffset();
         } while (!finished);
+    }
+
+    private boolean transactionLogAccumulateTooMuch() {
+        long curMinPk = transactionStore.minPK();
+        transactionStore.computeTotalRecords();
+        long curTotal = transactionStore.totalRecords();
+
+        return curMinPk < lastMaxOffset && curTotal > messageStore.getMessageStoreConfig().getDbTransactionLogAccumulateSize();
     }
 
     private void checkTransactionRecord(TransactionRecord transactionRecord, List<ClientChannelInfo> clientChannelInfoList) {
