@@ -16,7 +16,6 @@
  */
 package org.apache.rocketmq.client.impl;
 
-import java.lang.reflect.Field;
 import org.apache.rocketmq.client.ClientConfig;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.hook.SendMessageContext;
@@ -45,14 +44,14 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
+import java.lang.reflect.Field;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.failBecauseExceptionWasNotThrown;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MQClientAPIImplTest {
@@ -119,7 +118,7 @@ public class MQClientAPIImplTest {
             3 * 1000, CommunicationMode.SYNC, new SendMessageContext(), defaultMQProducerImpl);
 
         assertThat(sendResult.getSendStatus()).isEqualTo(SendStatus.SEND_OK);
-        assertThat(sendResult.getOffsetMsgId()).isEqualTo("123");
+        assertThat(sendResult.getMsgId()).isEqualTo("123");
         assertThat(sendResult.getQueueOffset()).isEqualTo(123L);
         assertThat(sendResult.getMessageQueue().getQueueId()).isEqualTo(1);
     }
@@ -171,7 +170,7 @@ public class MQClientAPIImplTest {
             new SendCallback() {
                 @Override public void onSuccess(SendResult sendResult) {
                     assertThat(sendResult.getSendStatus()).isEqualTo(SendStatus.SEND_OK);
-                    assertThat(sendResult.getOffsetMsgId()).isEqualTo("123");
+                    assertThat(sendResult.getMsgId()).isEqualTo("123");
                     assertThat(sendResult.getQueueOffset()).isEqualTo(123L);
                     assertThat(sendResult.getMessageQueue().getQueueId()).isEqualTo(1);
                 }

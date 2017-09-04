@@ -17,8 +17,6 @@
 
 package org.apache.rocketmq.test.client.rmq;
 
-import java.util.List;
-import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
@@ -27,6 +25,9 @@ import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.common.message.MessageQueue;
 import org.apache.rocketmq.test.clientinterface.AbstractMQProducer;
 import org.apache.rocketmq.test.sendresult.SendResult;
+
+import java.util.List;
+import java.util.Map;
 
 public class RMQNormalProducer extends AbstractMQProducer {
     private static Logger logger = Logger.getLogger(RMQNormalProducer.class);
@@ -91,7 +92,7 @@ public class RMQNormalProducer extends AbstractMQProducer {
             if (isDebug) {
                 logger.info(metaqResult);
             }
-            sendResult.setMsgId(metaqResult.getMsgId());
+            sendResult.setMsgId(metaqResult.getUniqueKey());
             sendResult.setSendResult(metaqResult.getSendStatus().equals(SendStatus.SEND_OK));
             sendResult.setBrokerIp(metaqResult.getMessageQueue().getBrokerName());
             msgBodys.addData(new String(metaqMsg.getBody()));
@@ -131,7 +132,7 @@ public class RMQNormalProducer extends AbstractMQProducer {
             if (isDebug) {
                 logger.info(metaqResult);
             }
-            sendResult.setMsgId(metaqResult.getMsgId());
+            sendResult.setMsgId(metaqResult.getUniqueKey());
             sendResult.setSendResult(metaqResult.getSendStatus().equals(SendStatus.SEND_OK));
             sendResult.setBrokerIp(metaqResult.getMessageQueue().getBrokerName());
             msgBodys.addData(new String(msg.getBody()));

@@ -21,33 +21,33 @@ import org.apache.rocketmq.common.message.MessageQueue;
 
 public class SendResult {
     private SendStatus sendStatus;
-    private String msgId;
+    private String uniqueKey;
     private MessageQueue messageQueue;
     private long queueOffset;
     private String transactionId;
-    private String offsetMsgId;
+    private String msgId;
     private String regionId;
     private boolean traceOn = true;
 
     public SendResult() {
     }
 
-    public SendResult(SendStatus sendStatus, String msgId, String offsetMsgId, MessageQueue messageQueue, long queueOffset) {
+    public SendResult(SendStatus sendStatus, String uniqueKey, String msgId, MessageQueue messageQueue, long queueOffset) {
         this.sendStatus = sendStatus;
+        this.uniqueKey = uniqueKey;
         this.msgId = msgId;
-        this.offsetMsgId = offsetMsgId;
         this.messageQueue = messageQueue;
         this.queueOffset = queueOffset;
     }
 
-    public SendResult(final SendStatus sendStatus, final String msgId, final MessageQueue messageQueue, final long queueOffset, final String transactionId,
-        final String offsetMsgId, final String regionId) {
+    public SendResult(final SendStatus sendStatus, final String uniqueKey, final MessageQueue messageQueue, final long queueOffset, final String transactionId,
+                      final String msgId, final String regionId) {
         this.sendStatus = sendStatus;
-        this.msgId = msgId;
+        this.uniqueKey = uniqueKey;
         this.messageQueue = messageQueue;
         this.queueOffset = queueOffset;
         this.transactionId = transactionId;
-        this.offsetMsgId = offsetMsgId;
+        this.msgId = msgId;
         this.regionId = regionId;
     }
 
@@ -75,12 +75,12 @@ public class SendResult {
         this.regionId = regionId;
     }
 
-    public String getMsgId() {
-        return msgId;
+    public String getUniqueKey() {
+        return uniqueKey;
     }
 
-    public void setMsgId(String msgId) {
-        this.msgId = msgId;
+    public void setUniqueKey(String uniqueKey) {
+        this.uniqueKey = uniqueKey;
     }
 
     public SendStatus getSendStatus() {
@@ -115,17 +115,17 @@ public class SendResult {
         this.transactionId = transactionId;
     }
 
-    public String getOffsetMsgId() {
-        return offsetMsgId;
+    public String getMsgId() {
+        return msgId;
     }
 
-    public void setOffsetMsgId(String offsetMsgId) {
-        this.offsetMsgId = offsetMsgId;
+    public void setMsgId(String msgId) {
+        this.msgId = msgId;
     }
 
     @Override
     public String toString() {
-        return "SendResult [sendStatus=" + sendStatus + ", msgId=" + msgId + ", offsetMsgId=" + offsetMsgId + ", messageQueue=" + messageQueue
+        return "SendResult [sendStatus=" + sendStatus + ", uniqueKey=" + uniqueKey + ", msgId=" + msgId + ", messageQueue=" + messageQueue
             + ", queueOffset=" + queueOffset + "]";
     }
 }

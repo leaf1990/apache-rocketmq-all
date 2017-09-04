@@ -640,4 +640,21 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <distributionManagement>
+        <site>
+            <id>website</id>
+            <url>scp://webhost.company.com/www/website</url>
+        </site>
+        <repository>
+            <id>releases</id>
+            <name>JP Releases</name>
+            <url>http://maven.66buy.com.cn:8081/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>JP Snapshots</name>
+            <url>http://maven.66buy.com.cn:8081/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

@@ -16,13 +16,14 @@
  */
 package org.apache.rocketmq.example.simple;
 
-import java.io.UnsupportedEncodingException;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
+
+import java.io.UnsupportedEncodingException;
 
 public class AsyncProducer {
     public static void main(String[] args) throws MQClientException, InterruptedException, UnsupportedEncodingException {
@@ -41,7 +42,7 @@ public class AsyncProducer {
                 producer.send(msg, new SendCallback() {
                     @Override
                     public void onSuccess(SendResult sendResult) {
-                        System.out.printf("%-10d OK %s %n", index, sendResult.getMsgId());
+                        System.out.printf("%-10d OK %s %n", index, sendResult.getUniqueKey());
                     }
 
                     @Override

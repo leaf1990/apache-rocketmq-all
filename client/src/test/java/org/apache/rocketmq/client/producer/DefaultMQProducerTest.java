@@ -16,12 +16,6 @@
  */
 package org.apache.rocketmq.client.producer;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import org.apache.rocketmq.client.ClientConfig;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
@@ -47,13 +41,16 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.failBecauseExceptionWasNotThrown;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -139,7 +136,7 @@ public class DefaultMQProducerTest {
         SendResult sendResult = producer.send(message);
 
         assertThat(sendResult.getSendStatus()).isEqualTo(SendStatus.SEND_OK);
-        assertThat(sendResult.getOffsetMsgId()).isEqualTo("123");
+        assertThat(sendResult.getMsgId()).isEqualTo("123");
         assertThat(sendResult.getQueueOffset()).isEqualTo(456L);
     }
 
@@ -180,7 +177,7 @@ public class DefaultMQProducerTest {
         SendResult sendResult = producer.send(message);
 
         assertThat(sendResult.getSendStatus()).isEqualTo(SendStatus.SEND_OK);
-        assertThat(sendResult.getOffsetMsgId()).isEqualTo("123");
+        assertThat(sendResult.getMsgId()).isEqualTo("123");
         assertThat(sendResult.getQueueOffset()).isEqualTo(456L);
 
         countDownLatch.await();
@@ -218,8 +215,8 @@ public class DefaultMQProducerTest {
 
     private SendResult createSendResult(SendStatus sendStatus) {
         SendResult sendResult = new SendResult();
+        sendResult.setUniqueKey("123");
         sendResult.setMsgId("123");
-        sendResult.setOffsetMsgId("123");
         sendResult.setQueueOffset(456);
         sendResult.setSendStatus(sendStatus);
         sendResult.setRegionId("HZ");

@@ -49,7 +49,7 @@ public class Consumer {
         final String isPrefixEnable = commandLine.hasOption('p') ? commandLine.getOptionValue('p').trim() : "true";
         String group = groupPrefix;
         if (Boolean.parseBoolean(isPrefixEnable)) {
-            group = groupPrefix + "_" + Long.toString(System.currentTimeMillis() % 100);
+            group = groupPrefix + "_" + "diwayou";
         }
 
         System.out.printf("topic %s group %s prefix %s%n", topic, group, isPrefixEnable);

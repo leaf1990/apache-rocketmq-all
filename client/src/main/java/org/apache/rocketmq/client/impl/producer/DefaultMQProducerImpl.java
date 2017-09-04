@@ -968,8 +968,8 @@ public class DefaultMQProducerImpl implements MQProducerInner {
         TransactionSendResult transactionSendResult = new TransactionSendResult();
         transactionSendResult.setSendStatus(sendResult.getSendStatus());
         transactionSendResult.setMessageQueue(sendResult.getMessageQueue());
+        transactionSendResult.setUniqueKey(sendResult.getUniqueKey());
         transactionSendResult.setMsgId(sendResult.getMsgId());
-        transactionSendResult.setOffsetMsgId(sendResult.getOffsetMsgId());
         transactionSendResult.setQueueOffset(sendResult.getQueueOffset());
         transactionSendResult.setTransactionId(sendResult.getTransactionId());
         transactionSendResult.setLocalTransactionState(localTransactionState);
@@ -988,10 +988,10 @@ public class DefaultMQProducerImpl implements MQProducerInner {
         final LocalTransactionState localTransactionState, //
         final Throwable localException) throws RemotingException, MQBrokerException, InterruptedException, UnknownHostException {
         final MessageId id;
-        if (sendResult.getOffsetMsgId() != null) {
-            id = MessageDecoder.decodeMessageId(sendResult.getOffsetMsgId());
-        } else {
+        if (sendResult.getMsgId() != null) {
             id = MessageDecoder.decodeMessageId(sendResult.getMsgId());
+        } else {
+            id = MessageDecoder.decodeMessageId(sendResult.getUniqueKey());
         }
         String transactionId = sendResult.getTransactionId();
         final String brokerAddr = this.mQClientFactory.findBrokerAddressInPublish(sendResult.getMessageQueue().getBrokerName());
@@ -1014,7 +1014,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
 
         requestHeader.setProducerGroup(this.defaultMQProducer.getProducerGroup());
         requestHeader.setTranStateTableOffset(sendResult.getQueueOffset());
-        requestHeader.setMsgId(sendResult.getMsgId());
+        requestHeader.setMsgId(sendResult.getUniqueKey());
         String remark = localException != null ? ("executeLocalTransactionBranch exception: " + localException.toString()) : null;
         this.mQClientFactory.getMQClientAPIImpl().endTransactionOneway(brokerAddr, requestHeader, remark,
             this.defaultMQProducer.getSendMsgTimeout());
