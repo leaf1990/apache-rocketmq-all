@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
@@ -51,12 +52,11 @@ public class Producer {
         final int threadCount = commandLine.hasOption('w') ? Integer.parseInt(commandLine.getOptionValue('w')) : 64;
         final int messageSize = commandLine.hasOption('s') ? Integer.parseInt(commandLine.getOptionValue('s')) : 128;
         final boolean keyEnable = commandLine.hasOption('k') && Boolean.parseBoolean(commandLine.getOptionValue('k'));
+        final int propertySize = commandLine.hasOption('p') ? Integer.parseInt(commandLine.getOptionValue('p')) : 0;
 
         System.out.printf("topic %s threadCount %d messageSize %d keyEnable %s%n", topic, threadCount, messageSize, keyEnable);
 
         final Logger log = ClientLogger.getLog();
-
-        final Message msg = buildMessage(messageSize, topic);
 
         final ExecutorService sendThreadPool = Executors.newFixedThreadPool(threadCount);
 
@@ -119,9 +119,36 @@ public class Producer {
                 public void run() {
                     while (true) {
                         try {
+                            final Message msg;
+                            try {
+                                msg = buildMessage(messageSize, topic);
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                                return;
+                            }
                             final long beginTimestamp = System.currentTimeMillis();
                             if (keyEnable) {
                                 msg.setKeys(String.valueOf(beginTimestamp / 1000));
+                            }
+                            if (propertySize > 0) {
+                                if (msg.getProperties() != null) {
+                                    msg.getProperties().clear();
+                                }
+                                int i = 0;
+                                int startValue = (new Random(System.currentTimeMillis())).nextInt(100);
+                                int size = 0;
+                                while (true) {
+                                    String prop1 = "prop" + i, prop1V = "hello" + startValue;
+                                    String prop2 = "prop" + (i + 1), prop2V = String.valueOf(startValue);
+                                    msg.putUserProperty(prop1, prop1V);
+                                    msg.putUserProperty(prop2, prop2V);
+                                    size += prop1.length() + prop2.length() + prop1V.length() + prop2V.length();
+                                    if (size > propertySize) {
+                                        break;
+                                    }
+                                    i += 2;
+                                    startValue += 2;
+                                }
                             }
                             producer.send(msg);
                             statsBenchmark.getSendRequestSuccessCount().incrementAndGet();

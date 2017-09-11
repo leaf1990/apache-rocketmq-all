@@ -16,6 +16,8 @@
  */
 package org.apache.rocketmq.store;
 
+import java.util.Map;
+
 public class DispatchRequest {
     private final String topic;
     private final int queueId;
@@ -30,6 +32,8 @@ public class DispatchRequest {
 
     private final int sysFlag;
     private final long preparedTransactionOffset;
+    private final Map<String, String> propertiesMap;
+    private byte[] bitMap;
 
     /**
      * for transaction
@@ -48,6 +52,7 @@ public class DispatchRequest {
         final String uniqKey,
         final int sysFlag,
         final long preparedTransactionOffset,
+        final Map<String, String> propertiesMap,
         final String producerGroup
     ) {
         this.topic = topic;
@@ -63,58 +68,43 @@ public class DispatchRequest {
         this.sysFlag = sysFlag;
         this.preparedTransactionOffset = preparedTransactionOffset;
         this.success = true;
+        this.propertiesMap = propertiesMap;
 
         this.producerGroup = producerGroup;
     }
 
     public DispatchRequest(int size) {
-        // 1
         this.topic = "";
-        // 2
         this.queueId = 0;
-        // 3
         this.commitLogOffset = 0;
-        // 4
         this.msgSize = size;
-        // 5
         this.tagsCode = 0;
-        // 6
         this.storeTimestamp = 0;
-        // 7
         this.consumeQueueOffset = 0;
-        // 8
         this.keys = "";
-        //9
         this.uniqKey = null;
         this.sysFlag = 0;
         this.preparedTransactionOffset = 0;
         this.success = false;
+        this.propertiesMap = null;
 
         this.producerGroup = null;
     }
 
     public DispatchRequest(int size, boolean success) {
-        // 1
         this.topic = "";
-        // 2
         this.queueId = 0;
-        // 3
         this.commitLogOffset = 0;
-        // 4
         this.msgSize = size;
-        // 5
         this.tagsCode = 0;
-        // 6
         this.storeTimestamp = 0;
-        // 7
         this.consumeQueueOffset = 0;
-        // 8
         this.keys = "";
-        // 9
         this.uniqKey = null;
         this.sysFlag = 0;
         this.preparedTransactionOffset = 0;
         this.success = success;
+        this.propertiesMap = null;
 
         this.producerGroup = null;
     }
@@ -167,6 +157,17 @@ public class DispatchRequest {
         return uniqKey;
     }
 
+    public Map<String, String> getPropertiesMap() {
+        return propertiesMap;
+    }
+
+    public byte[] getBitMap() {
+        return bitMap;
+    }
+
+    public void setBitMap(byte[] bitMap) {
+        this.bitMap = bitMap;
+    }
     public String getProducerGroup() {
         return producerGroup;
     }

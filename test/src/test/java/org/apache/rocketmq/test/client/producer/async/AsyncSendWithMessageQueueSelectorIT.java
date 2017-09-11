@@ -17,7 +17,6 @@
 
 package org.apache.rocketmq.test.client.producer.async;
 
-import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.rocketmq.client.producer.MessageQueueSelector;
 import org.apache.rocketmq.common.message.Message;
@@ -32,11 +31,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
+
 import static com.google.common.truth.Truth.assertThat;
 
 public class AsyncSendWithMessageQueueSelectorIT extends BaseConf {
     private static Logger logger = Logger.getLogger(TagMessageWith1ConsumerIT.class);
-    private static boolean sendFail = false;
     private RMQAsyncSendProducer producer = null;
     private String topic = null;
 
@@ -72,15 +72,16 @@ public class AsyncSendWithMessageQueueSelectorIT extends BaseConf {
         producer.waitForResponse(5 * 1000);
         assertThat(producer.getSuccessMsgCount()).isEqualTo(msgSize);
 
-        consumer.getListner().waitForMessageConsume(producer.getAllMsgBody(), consumeTime);
+        consumer.getListener().waitForMessageConsume(producer.getAllMsgBody(), consumeTime);
         assertThat(VerifyUtils.getFilterdMessage(producer.getAllMsgBody(),
-            consumer.getListner().getAllMsgBody()))
+            consumer.getListener().getAllMsgBody()))
             .containsExactlyElementsIn(producer.getAllMsgBody());
 
-        VerifyUtils.verifyMessageQueueId(queueId, consumer.getListner().getAllOriginMsg());
+        VerifyUtils.verifyMessageQueueId(queueId, consumer.getListener().getAllOriginMsg());
 
         producer.clearMsg();
         consumer.clearMsg();
+        producer.getSuccessSendResult().clear();
 
         producer.asyncSend(msgSize, new MessageQueueSelector() {
             @Override
@@ -96,11 +97,11 @@ public class AsyncSendWithMessageQueueSelectorIT extends BaseConf {
         producer.waitForResponse(5 * 1000);
         assertThat(producer.getSuccessMsgCount()).isEqualTo(msgSize);
 
-        consumer.getListner().waitForMessageConsume(producer.getAllMsgBody(), consumeTime);
+        consumer.getListener().waitForMessageConsume(producer.getAllMsgBody(), consumeTime);
         assertThat(VerifyUtils.getFilterdMessage(producer.getAllMsgBody(),
-            consumer.getListner().getAllMsgBody()))
+            consumer.getListener().getAllMsgBody()))
             .containsExactlyElementsIn(producer.getAllMsgBody());
 
-        VerifyUtils.verifyMessageQueueId(queueId, consumer.getListner().getAllOriginMsg());
+        VerifyUtils.verifyMessageQueueId(queueId, consumer.getListener().getAllOriginMsg());
     }
 }

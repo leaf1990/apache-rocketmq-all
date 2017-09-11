@@ -16,8 +16,6 @@
  */
 package org.apache.rocketmq.client.consumer;
 
-import java.util.HashSet;
-import java.util.Set;
 import org.apache.rocketmq.client.ClientConfig;
 import org.apache.rocketmq.client.QueryResult;
 import org.apache.rocketmq.client.consumer.rebalance.AllocateMessageQueueAveragely;
@@ -32,6 +30,9 @@ import org.apache.rocketmq.common.message.MessageQueue;
 import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 import org.apache.rocketmq.remoting.RPCHook;
 import org.apache.rocketmq.remoting.exception.RemotingException;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Default pulling consumer
@@ -264,7 +265,8 @@ public class DefaultMQPullConsumer extends ClientConfig implements MQPullConsume
     }
 
     @Override
-    public void pull(MessageQueue mq, String subExpression, long offset, int maxNums, PullCallback pullCallback, long timeout)
+    public void pull(MessageQueue mq, String subExpression, long offset, int maxNums, PullCallback pullCallback,
+        long timeout)
         throws MQClientException, RemotingException, InterruptedException {
         this.defaultMQPullConsumerImpl.pull(mq, subExpression, offset, maxNums, pullCallback, timeout);
     }
@@ -276,7 +278,8 @@ public class DefaultMQPullConsumer extends ClientConfig implements MQPullConsume
     }
 
     @Override
-    public void pullBlockIfNotFound(MessageQueue mq, String subExpression, long offset, int maxNums, PullCallback pullCallback)
+    public void pullBlockIfNotFound(MessageQueue mq, String subExpression, long offset, int maxNums,
+        PullCallback pullCallback)
         throws MQClientException, RemotingException, InterruptedException {
         this.defaultMQPullConsumerImpl.pullBlockIfNotFound(mq, subExpression, offset, maxNums, pullCallback);
     }
@@ -297,7 +300,8 @@ public class DefaultMQPullConsumer extends ClientConfig implements MQPullConsume
     }
 
     @Override
-    public MessageExt viewMessage(String topic, String uniqKey) throws RemotingException, MQBrokerException, InterruptedException, MQClientException {
+    public MessageExt viewMessage(String topic,
+        String uniqKey) throws RemotingException, MQBrokerException, InterruptedException, MQClientException {
         try {
             MessageDecoder.decodeMessageId(uniqKey);
             return this.viewMessage(uniqKey);

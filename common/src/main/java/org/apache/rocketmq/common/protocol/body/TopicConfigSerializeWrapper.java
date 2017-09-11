@@ -17,21 +17,23 @@
 
 package org.apache.rocketmq.common.protocol.body;
 
-import java.util.concurrent.ConcurrentHashMap;
 import org.apache.rocketmq.common.DataVersion;
 import org.apache.rocketmq.common.TopicConfig;
 import org.apache.rocketmq.remoting.protocol.RemotingSerializable;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 public class TopicConfigSerializeWrapper extends RemotingSerializable {
-    private ConcurrentHashMap<String, TopicConfig> topicConfigTable =
+    private ConcurrentMap<String, TopicConfig> topicConfigTable =
         new ConcurrentHashMap<String, TopicConfig>();
     private DataVersion dataVersion = new DataVersion();
 
-    public ConcurrentHashMap<String, TopicConfig> getTopicConfigTable() {
+    public ConcurrentMap<String, TopicConfig> getTopicConfigTable() {
         return topicConfigTable;
     }
 
-    public void setTopicConfigTable(ConcurrentHashMap<String, TopicConfig> topicConfigTable) {
+    public void setTopicConfigTable(ConcurrentMap<String, TopicConfig> topicConfigTable) {
         this.topicConfigTable = topicConfigTable;
     }
 

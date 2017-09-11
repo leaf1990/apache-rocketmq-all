@@ -16,11 +16,6 @@
  */
 package org.apache.rocketmq.tools.command.message;
 
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -39,6 +34,13 @@ import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.apache.rocketmq.tools.admin.DefaultMQAdminExt;
 import org.apache.rocketmq.tools.admin.api.MessageTrack;
 import org.apache.rocketmq.tools.command.SubCommand;
+import org.apache.rocketmq.tools.command.SubCommandException;
+
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
 
 public class QueryMsgByIdSubCommand implements SubCommand {
     public static void queryById(final DefaultMQAdminExt admin, final String msgId) throws MQClientException,
@@ -209,7 +211,7 @@ public class QueryMsgByIdSubCommand implements SubCommand {
     }
 
     @Override
-    public void execute(CommandLine commandLine, Options options, RPCHook rpcHook) {
+    public void execute(CommandLine commandLine, Options options, RPCHook rpcHook) throws SubCommandException {
         DefaultMQAdminExt defaultMQAdminExt = new DefaultMQAdminExt(rpcHook);
         defaultMQAdminExt.setInstanceName(Long.toString(System.currentTimeMillis()));
         DefaultMQProducer defaultMQProducer = new DefaultMQProducer("ReSendMsgById");
@@ -254,14 +256,15 @@ public class QueryMsgByIdSubCommand implements SubCommand {
 
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new SubCommandException(this.getClass().getSimpleName() + " command failed", e);
         } finally {
             defaultMQProducer.shutdown();
             defaultMQAdminExt.shutdown();
         }
     }
 
-    private void pushMsg(final DefaultMQAdminExt defaultMQAdminExt, final String consumerGroup, final String clientId, final String msgId) {
+    private void pushMsg(final DefaultMQAdminExt defaultMQAdminExt, final String consumerGroup, final String clientId,
+        final String msgId) {
         try {
             ConsumeMessageDirectlyResult result =
                 defaultMQAdminExt.consumeMessageDirectly(consumerGroup, clientId, msgId);

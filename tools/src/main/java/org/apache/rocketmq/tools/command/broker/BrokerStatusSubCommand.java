@@ -16,10 +16,6 @@
  */
 package org.apache.rocketmq.tools.command.broker;
 
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -32,6 +28,12 @@ import org.apache.rocketmq.remoting.exception.RemotingTimeoutException;
 import org.apache.rocketmq.tools.admin.DefaultMQAdminExt;
 import org.apache.rocketmq.tools.command.CommandUtil;
 import org.apache.rocketmq.tools.command.SubCommand;
+import org.apache.rocketmq.tools.command.SubCommandException;
+
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
 public class BrokerStatusSubCommand implements SubCommand {
 
@@ -59,7 +61,7 @@ public class BrokerStatusSubCommand implements SubCommand {
     }
 
     @Override
-    public void execute(CommandLine commandLine, Options options, RPCHook rpcHook) {
+    public void execute(CommandLine commandLine, Options options, RPCHook rpcHook) throws SubCommandException {
         DefaultMQAdminExt defaultMQAdminExt = new DefaultMQAdminExt(rpcHook);
 
         defaultMQAdminExt.setInstanceName(Long.toString(System.currentTimeMillis()));
@@ -84,7 +86,7 @@ public class BrokerStatusSubCommand implements SubCommand {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new SubCommandException(this.getClass().getSimpleName() + " command failed", e);
         } finally {
             defaultMQAdminExt.shutdown();
         }

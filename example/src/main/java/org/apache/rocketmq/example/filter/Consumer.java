@@ -16,8 +16,6 @@
  */
 package org.apache.rocketmq.example.filter;
 
-import java.io.File;
-import java.util.List;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
@@ -26,9 +24,13 @@ import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.MixAll;
 import org.apache.rocketmq.common.message.MessageExt;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
 public class Consumer {
 
-    public static void main(String[] args) throws InterruptedException, MQClientException {
+    public static void main(String[] args) throws InterruptedException, MQClientException, IOException {
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("ConsumerGroupNamecc4");
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();

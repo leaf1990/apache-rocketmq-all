@@ -16,16 +16,17 @@
  */
 package org.apache.rocketmq.store.index;
 
+import org.apache.rocketmq.common.constant.LoggerName;
+import org.apache.rocketmq.store.MappedFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.List;
-import org.apache.rocketmq.common.constant.LoggerName;
-import org.apache.rocketmq.store.MappedFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class IndexFile {
     private static final Logger log = LoggerFactory.getLogger(LoggerName.STORE_LOGGER_NAME);
@@ -147,7 +148,7 @@ public class IndexFile {
                     try {
                         fileLock.release();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        log.error("Failed to release the lock", e);
                     }
                 }
             }
@@ -208,9 +209,8 @@ public class IndexFile {
 
                 if (slotValue <= invalidIndex || slotValue > this.indexHeader.getIndexCount()
                     || this.indexHeader.getIndexCount() <= 1) {
-                    // TODO NOTFOUND
                 } else {
-                    for (int nextIndexToRead = slotValue;;) {
+                    for (int nextIndexToRead = slotValue; ; ) {
                         if (phyOffsets.size() >= maxNum) {
                             break;
                         }
@@ -254,7 +254,7 @@ public class IndexFile {
                     try {
                         fileLock.release();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        log.error("Failed to release the lock", e);
                     }
                 }
 

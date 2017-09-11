@@ -17,6 +17,8 @@
 
 package org.apache.rocketmq.common;
 
+import org.slf4j.Logger;
+
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -25,7 +27,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.slf4j.Logger;
 
 public class Configuration {
 
@@ -65,7 +66,6 @@ public class Configuration {
     /**
      * register config object
      *
-     * @param configObject
      * @return the current Configuration object
      */
     public Configuration registerConfig(Object configObject) {
@@ -91,7 +91,6 @@ public class Configuration {
     /**
      * register config properties
      *
-     * @param extProperties
      * @return the current Configuration object
      */
     public Configuration registerConfig(Properties extProperties) {
@@ -117,8 +116,6 @@ public class Configuration {
     /**
      * The store path will be gotten from the field of object.
      *
-     * @param object
-     * @param fieldName
      * @throws java.lang.RuntimeException if the field of object is not exist.
      */
     public void setStorePathFromConfig(Object object, String fieldName) {

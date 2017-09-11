@@ -16,13 +16,15 @@
  */
 package org.apache.rocketmq.client.producer;
 
-import java.util.List;
 import org.apache.rocketmq.client.MQAdmin;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.common.message.MessageQueue;
 import org.apache.rocketmq.remoting.exception.RemotingException;
+
+import java.util.Collection;
+import java.util.List;
 
 public interface MQProducer extends MQAdmin {
     void start() throws MQClientException;
@@ -81,4 +83,17 @@ public interface MQProducer extends MQAdmin {
 
     TransactionSendResult sendMessageInTransaction(final Message msg,
         final LocalTransactionExecuter tranExecuter, final Object arg) throws MQClientException;
+
+    //for batch
+    SendResult send(final Collection<Message> msgs) throws MQClientException, RemotingException, MQBrokerException,
+        InterruptedException;
+
+    SendResult send(final Collection<Message> msgs, final long timeout) throws MQClientException,
+        RemotingException, MQBrokerException, InterruptedException;
+
+    SendResult send(final Collection<Message> msgs, final MessageQueue mq) throws MQClientException,
+        RemotingException, MQBrokerException, InterruptedException;
+
+    SendResult send(final Collection<Message> msgs, final MessageQueue mq, final long timeout)
+        throws MQClientException, RemotingException, MQBrokerException, InterruptedException;
 }

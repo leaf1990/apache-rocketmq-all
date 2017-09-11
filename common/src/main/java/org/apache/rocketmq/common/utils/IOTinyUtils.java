@@ -17,21 +17,12 @@
 
 package org.apache.rocketmq.common.utils;
 
-import java.io.BufferedReader;
-import java.io.CharArrayWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
+import org.apache.rocketmq.remoting.common.RemotingHelper;
+
+import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.rocketmq.remoting.common.RemotingHelper;
 
 public class IOTinyUtils {
 
@@ -60,7 +51,7 @@ public class IOTinyUtils {
         BufferedReader reader = toBufferedReader(input);
         List<String> list = new ArrayList<String>();
         String line;
-        for (;;) {
+        for (; ; ) {
             line = reader.readLine();
             if (null != line) {
                 list.add(line);
@@ -114,9 +105,6 @@ public class IOTinyUtils {
         fileOrDir.delete();
     }
 
-    /**
-
-     */
     public static void cleanDirectory(File directory) throws IOException {
         if (!directory.exists()) {
             String message = directory + " does not exist";

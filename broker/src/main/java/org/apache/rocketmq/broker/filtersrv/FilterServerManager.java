@@ -18,14 +18,6 @@
 package org.apache.rocketmq.broker.filtersrv;
 
 import io.netty.channel.Channel;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import org.apache.rocketmq.broker.BrokerController;
 import org.apache.rocketmq.broker.BrokerStartup;
 import org.apache.rocketmq.common.ThreadFactoryImpl;
@@ -34,11 +26,17 @@ import org.apache.rocketmq.remoting.common.RemotingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.concurrent.*;
+
 public class FilterServerManager {
 
     public static final long FILTER_SERVER_MAX_IDLE_TIME_MILLS = 30000;
     private static final Logger log = LoggerFactory.getLogger(LoggerName.BROKER_LOGGER_NAME);
-    private final ConcurrentHashMap<Channel, FilterServerInfo> filterServerTable =
+    private final ConcurrentMap<Channel, FilterServerInfo> filterServerTable =
         new ConcurrentHashMap<Channel, FilterServerInfo>(16);
     private final BrokerController brokerController;
 
@@ -110,9 +108,6 @@ public class FilterServerManager {
         }
     }
 
-    /**
-
-     */
     public void scanNotActiveChannel() {
 
         Iterator<Entry<Channel, FilterServerInfo>> it = this.filterServerTable.entrySet().iterator();

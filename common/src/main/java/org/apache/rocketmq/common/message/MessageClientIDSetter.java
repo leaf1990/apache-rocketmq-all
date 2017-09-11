@@ -16,11 +16,12 @@
  */
 package org.apache.rocketmq.common.message;
 
+import org.apache.rocketmq.common.UtilAll;
+
 import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.apache.rocketmq.common.UtilAll;
 
 public class MessageClientIDSetter {
     private static final String TOPIC_KEY_SPLITTER = "#";
@@ -42,7 +43,7 @@ public class MessageClientIDSetter {
             tempBuffer.put(createFakeIP());
         }
         tempBuffer.position(6);
-        tempBuffer.putInt(MessageClientIDSetter.class.getClassLoader().hashCode()); //4
+        tempBuffer.putInt(MessageClientIDSetter.class.getClassLoader().hashCode());
         FIX_STRING = UtilAll.bytes2string(tempBuffer.array());
         setStartTime(System.currentTimeMillis());
         COUNTER = new AtomicInteger(0);
@@ -52,7 +53,7 @@ public class MessageClientIDSetter {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(millis);
         cal.set(Calendar.DAY_OF_MONTH, 1);
-        cal.set(Calendar.HOUR, 0);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
@@ -74,7 +75,7 @@ public class MessageClientIDSetter {
         Calendar cal = Calendar.getInstance();
         long now = cal.getTimeInMillis();
         cal.set(Calendar.DAY_OF_MONTH, 1);
-        cal.set(Calendar.HOUR, 0);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);

@@ -16,8 +16,9 @@
  */
 package org.apache.rocketmq.common;
 
-import java.util.concurrent.atomic.AtomicLong;
 import org.apache.rocketmq.remoting.protocol.RemotingSerializable;
+
+import java.util.concurrent.atomic.AtomicLong;
 
 public class DataVersion extends RemotingSerializable {
     private long timestamp = System.currentTimeMillis();
@@ -74,7 +75,7 @@ public class DataVersion extends RemotingSerializable {
         int result = (int) (timestamp ^ (timestamp >>> 32));
         if (null != counter) {
             long l = counter.get();
-            result = 31 * result + (int)(l ^ (l >>> 32));
+            result = 31 * result + (int) (l ^ (l >>> 32));
         }
         return result;
     }

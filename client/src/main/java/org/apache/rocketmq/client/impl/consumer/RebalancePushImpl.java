@@ -16,9 +16,6 @@
  */
 package org.apache.rocketmq.client.impl.consumer;
 
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import org.apache.rocketmq.client.consumer.AllocateMessageQueueStrategy;
 import org.apache.rocketmq.client.consumer.store.OffsetStore;
 import org.apache.rocketmq.client.consumer.store.ReadOffsetType;
@@ -30,6 +27,11 @@ import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.message.MessageQueue;
 import org.apache.rocketmq.common.protocol.heartbeat.ConsumeType;
 import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
+import org.apache.rocketmq.common.protocol.heartbeat.SubscriptionData;
+
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class RebalancePushImpl extends RebalanceImpl {
     private final static long UNLOCK_DELAY_TIME_MILLS = Long.parseLong(System.getProperty("rocketmq.client.unlockDelayTimeMills", "20000"));
@@ -39,7 +41,8 @@ public class RebalancePushImpl extends RebalanceImpl {
         this(null, null, null, null, defaultMQPushConsumerImpl);
     }
 
-    public RebalancePushImpl(String consumerGroup, MessageModel messageModel, AllocateMessageQueueStrategy allocateMessageQueueStrategy,
+    public RebalancePushImpl(String consumerGroup, MessageModel messageModel,
+        AllocateMessageQueueStrategy allocateMessageQueueStrategy,
         MQClientInstance mQClientFactory, DefaultMQPushConsumerImpl defaultMQPushConsumerImpl) {
         super(consumerGroup, messageModel, allocateMessageQueueStrategy, mQClientFactory);
         this.defaultMQPushConsumerImpl = defaultMQPushConsumerImpl;
@@ -47,6 +50,16 @@ public class RebalancePushImpl extends RebalanceImpl {
 
     @Override
     public void messageQueueChanged(String topic, Set<MessageQueue> mqAll, Set<MessageQueue> mqDivided) {
+        /**
+         * When rebalance result changed, should update subscription's version to notify broker.
+         * Fix: inconsistency subscription may lead to consumer miss messages.
+         */
+        SubscriptionData subscriptionData = this.subscriptionInner.get(topic);
+        long newVersion = System.currentTimeMillis();
+        log.info("{} Rebalance changed, also update version: {}, {}", topic, subscriptionData.getSubVersion(), newVersion);
+        subscriptionData.setSubVersion(newVersion);
+        // notify broker
+        this.getmQClientFactory().sendHeartbeatToAllBrokerWithLock();
     }
 
     @Override
@@ -63,8 +76,8 @@ public class RebalancePushImpl extends RebalanceImpl {
                         pq.getLockConsume().unlock();
                     }
                 } else {
-                    log.warn("[WRONG]mq is consuming, so can not unlock it, {}. maybe hanged for a while, {}", //
-                        mq, //
+                    log.warn("[WRONG]mq is consuming, so can not unlock it, {}. maybe hanged for a while, {}",
+                        mq,
                         pq.getTryUnlockTimes());
 
                     pq.incTryUnlockTimes();
@@ -160,7 +173,7 @@ public class RebalancePushImpl extends RebalanceImpl {
                     } else {
                         try {
                             long timestamp = UtilAll.parseDate(this.defaultMQPushConsumerImpl.getDefaultMQPushConsumer().getConsumeTimestamp(),
-                                UtilAll.YYYY_MMDD_HHMMSS).getTime();
+                                UtilAll.YYYYMMDDHHMMSS).getTime();
                             result = this.mQClientFactory.getMQAdminImpl().searchOffset(mq, timestamp);
                         } catch (MQClientException e) {
                             result = -1;

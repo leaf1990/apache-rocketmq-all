@@ -17,7 +17,6 @@
 
 package org.apache.rocketmq.test.client.producer.order;
 
-import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.rocketmq.common.message.MessageQueue;
 import org.apache.rocketmq.test.base.BaseConf;
@@ -30,6 +29,8 @@ import org.apache.rocketmq.test.util.VerifyUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -59,13 +60,13 @@ public class OrderMsgIT extends BaseConf {
         MessageQueueMsg mqMsgs = new MessageQueueMsg(mqs, msgSize);
         producer.send(mqMsgs.getMsgsWithMQ());
 
-        consumer.getListner().waitForMessageConsume(producer.getAllMsgBody(), consumeTime);
+        consumer.getListener().waitForMessageConsume(producer.getAllMsgBody(), consumeTime);
 
         assertThat(VerifyUtils.getFilterdMessage(producer.getAllMsgBody(),
-            consumer.getListner().getAllMsgBody()))
+            consumer.getListener().getAllMsgBody()))
             .containsExactlyElementsIn(mqMsgs.getMsgBodys());
 
-        assertThat(VerifyUtils.verifyOrder(((RMQOrderListener) consumer.getListner()).getMsgs()))
+        assertThat(VerifyUtils.verifyOrder(((RMQOrderListener) consumer.getListener()).getMsgs()))
             .isEqualTo(true);
     }
 
@@ -77,13 +78,13 @@ public class OrderMsgIT extends BaseConf {
             msgSize);
         producer.send(mqMsgs.getMsgsWithMQ());
 
-        consumer.getListner().waitForMessageConsume(producer.getAllMsgBody(), consumeTime);
+        consumer.getListener().waitForMessageConsume(producer.getAllMsgBody(), consumeTime);
 
         assertThat(VerifyUtils.getFilterdMessage(producer.getAllMsgBody(),
-            consumer.getListner().getAllMsgBody()))
+            consumer.getListener().getAllMsgBody()))
             .containsExactlyElementsIn(mqMsgs.getMsgBodys());
 
-        assertThat(VerifyUtils.verifyOrder(((RMQOrderListener) consumer.getListner()).getMsgs()))
+        assertThat(VerifyUtils.verifyOrder(((RMQOrderListener) consumer.getListener()).getMsgs()))
             .isEqualTo(true);
     }
 
@@ -96,13 +97,13 @@ public class OrderMsgIT extends BaseConf {
             msgSize);
         producer.send(mqMsgs.getMsgsWithMQ());
 
-        consumer.getListner().waitForMessageConsume(producer.getAllMsgBody(), consumeTime);
+        consumer.getListener().waitForMessageConsume(producer.getAllMsgBody(), consumeTime);
 
         assertThat(VerifyUtils.getFilterdMessage(producer.getAllMsgBody(),
-            consumer.getListner().getAllMsgBody()))
+            consumer.getListener().getAllMsgBody()))
             .containsExactlyElementsIn(mqMsgs.getMsgBodys());
 
-        assertThat(VerifyUtils.verifyOrder(((RMQOrderListener) consumer.getListner()).getMsgs()))
+        assertThat(VerifyUtils.verifyOrder(((RMQOrderListener) consumer.getListener()).getMsgs()))
             .isEqualTo(true);
     }
 }

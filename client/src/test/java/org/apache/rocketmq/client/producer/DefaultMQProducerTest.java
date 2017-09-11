@@ -146,13 +146,16 @@ public class DefaultMQProducerTest {
         final Throwable[] assertionErrors = new Throwable[1];
         final CountDownLatch countDownLatch = new CountDownLatch(2);
         producer.getDefaultMQProducerImpl().registerSendMessageHook(new SendMessageHook() {
-            @Override public String hookName() {
+            @Override
+            public String hookName() {
                 return "TestHook";
             }
 
-            @Override public void sendMessageBefore(final SendMessageContext context) {
+            @Override
+            public void sendMessageBefore(final SendMessageContext context) {
                 assertionErrors[0] = assertInOtherThread(new Runnable() {
-                    @Override public void run() {
+                    @Override
+                    public void run() {
                         assertThat(context.getMessage()).isEqualTo(message);
                         assertThat(context.getProducer()).isEqualTo(producer);
                         assertThat(context.getCommunicationMode()).isEqualTo(CommunicationMode.SYNC);
@@ -162,9 +165,11 @@ public class DefaultMQProducerTest {
                 countDownLatch.countDown();
             }
 
-            @Override public void sendMessageAfter(final SendMessageContext context) {
+            @Override
+            public void sendMessageAfter(final SendMessageContext context) {
                 assertionErrors[0] = assertInOtherThread(new Runnable() {
-                    @Override public void run() {
+                    @Override
+                    public void run() {
                         assertThat(context.getMessage()).isEqualTo(message);
                         assertThat(context.getProducer()).isEqualTo(producer.getDefaultMQProducerImpl());
                         assertThat(context.getCommunicationMode()).isEqualTo(CommunicationMode.SYNC);
@@ -191,17 +196,17 @@ public class DefaultMQProducerTest {
         TopicRouteData topicRouteData = new TopicRouteData();
 
         topicRouteData.setFilterServerTable(new HashMap<String, List<String>>());
-        List<BrokerData> brokerDataList = new ArrayList<>();
+        List<BrokerData> brokerDataList = new ArrayList<BrokerData>();
         BrokerData brokerData = new BrokerData();
         brokerData.setBrokerName("BrokerA");
         brokerData.setCluster("DefaultCluster");
-        HashMap<Long, String> brokerAddrs = new HashMap<>();
+        HashMap<Long, String> brokerAddrs = new HashMap<Long, String>();
         brokerAddrs.put(0L, "127.0.0.1:10911");
         brokerData.setBrokerAddrs(brokerAddrs);
         brokerDataList.add(brokerData);
         topicRouteData.setBrokerDatas(brokerDataList);
 
-        List<QueueData> queueDataList = new ArrayList<>();
+        List<QueueData> queueDataList = new ArrayList<QueueData>();
         QueueData queueData = new QueueData();
         queueData.setBrokerName("BrokerA");
         queueData.setPerm(6);
@@ -226,7 +231,8 @@ public class DefaultMQProducerTest {
     private Throwable assertInOtherThread(final Runnable runnable) {
         final Throwable[] assertionErrors = new Throwable[1];
         Thread thread = new Thread(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 try {
                     runnable.run();
                 } catch (AssertionError e) {

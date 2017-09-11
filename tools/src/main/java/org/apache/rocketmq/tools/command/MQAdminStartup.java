@@ -19,8 +19,6 @@ package org.apache.rocketmq.tools.command;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
@@ -29,47 +27,23 @@ import org.apache.rocketmq.common.MixAll;
 import org.apache.rocketmq.remoting.RPCHook;
 import org.apache.rocketmq.remoting.protocol.RemotingCommand;
 import org.apache.rocketmq.srvutil.ServerUtil;
-import org.apache.rocketmq.tools.command.broker.BrokerConsumeStatsSubCommad;
-import org.apache.rocketmq.tools.command.broker.BrokerStatusSubCommand;
-import org.apache.rocketmq.tools.command.broker.CleanExpiredCQSubCommand;
-import org.apache.rocketmq.tools.command.broker.CleanUnusedTopicCommand;
-import org.apache.rocketmq.tools.command.broker.GetBrokerConfigCommand;
-import org.apache.rocketmq.tools.command.broker.SendMsgStatusCommand;
-import org.apache.rocketmq.tools.command.broker.UpdateBrokerConfigSubCommand;
+import org.apache.rocketmq.tools.command.broker.*;
 import org.apache.rocketmq.tools.command.cluster.CLusterSendMsgRTCommand;
 import org.apache.rocketmq.tools.command.cluster.ClusterListSubCommand;
 import org.apache.rocketmq.tools.command.connection.ConsumerConnectionSubCommand;
 import org.apache.rocketmq.tools.command.connection.ProducerConnectionSubCommand;
-import org.apache.rocketmq.tools.command.consumer.ConsumerProgressSubCommand;
-import org.apache.rocketmq.tools.command.consumer.ConsumerStatusSubCommand;
-import org.apache.rocketmq.tools.command.consumer.DeleteSubscriptionGroupCommand;
-import org.apache.rocketmq.tools.command.consumer.StartMonitoringSubCommand;
-import org.apache.rocketmq.tools.command.consumer.UpdateSubGroupSubCommand;
-import org.apache.rocketmq.tools.command.message.CheckMsgSendRTCommand;
-import org.apache.rocketmq.tools.command.message.PrintMessageByQueueCommand;
-import org.apache.rocketmq.tools.command.message.PrintMessageSubCommand;
-import org.apache.rocketmq.tools.command.message.QueryMsgByIdSubCommand;
-import org.apache.rocketmq.tools.command.message.QueryMsgByKeySubCommand;
-import org.apache.rocketmq.tools.command.message.QueryMsgByOffsetSubCommand;
-import org.apache.rocketmq.tools.command.message.QueryMsgByUniqueKeySubCommand;
-import org.apache.rocketmq.tools.command.namesrv.DeleteKvConfigCommand;
-import org.apache.rocketmq.tools.command.namesrv.GetNamesrvConfigCommand;
-import org.apache.rocketmq.tools.command.namesrv.UpdateKvConfigCommand;
-import org.apache.rocketmq.tools.command.namesrv.UpdateNamesrvConfigCommand;
-import org.apache.rocketmq.tools.command.namesrv.WipeWritePermSubCommand;
+import org.apache.rocketmq.tools.command.consumer.*;
+import org.apache.rocketmq.tools.command.message.*;
+import org.apache.rocketmq.tools.command.namesrv.*;
 import org.apache.rocketmq.tools.command.offset.CloneGroupOffsetCommand;
 import org.apache.rocketmq.tools.command.offset.ResetOffsetByTimeCommand;
+import org.apache.rocketmq.tools.command.queue.QueryConsumeQueueCommand;
 import org.apache.rocketmq.tools.command.stats.StatsAllSubCommand;
-import org.apache.rocketmq.tools.command.topic.AllocateMQSubCommand;
-import org.apache.rocketmq.tools.command.topic.DeleteTopicSubCommand;
-import org.apache.rocketmq.tools.command.topic.TopicClusterSubCommand;
-import org.apache.rocketmq.tools.command.topic.TopicListSubCommand;
-import org.apache.rocketmq.tools.command.topic.TopicRouteSubCommand;
-import org.apache.rocketmq.tools.command.topic.TopicStatusSubCommand;
-import org.apache.rocketmq.tools.command.topic.UpdateOrderConfCommand;
-import org.apache.rocketmq.tools.command.topic.UpdateTopicPermSubCommand;
-import org.apache.rocketmq.tools.command.topic.UpdateTopicSubCommand;
+import org.apache.rocketmq.tools.command.topic.*;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MQAdminStartup {
     protected static List<SubCommand> subCommandList = new ArrayList<SubCommand>();
@@ -189,6 +163,8 @@ public class MQAdminStartup {
         initCommand(new GetNamesrvConfigCommand());
         initCommand(new UpdateNamesrvConfigCommand());
         initCommand(new GetBrokerConfigCommand());
+
+        initCommand(new QueryConsumeQueueCommand());
     }
 
     private static void initLogback() throws JoranException {
@@ -208,7 +184,7 @@ public class MQAdminStartup {
             System.out.printf("   %-20s %s%n", cmd.commandName(), cmd.commandDesc());
         }
 
-        System.out.printf("%nSee 'mqadmin help <command>' for more information on a specific command.");
+        System.out.printf("%nSee 'mqadmin help <command>' for more information on a specific command.%n");
     }
 
     private static SubCommand findSubCommand(final String name) {

@@ -16,18 +16,19 @@
  */
 package org.apache.rocketmq.namesrv.kvconfig;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.rocketmq.common.MixAll;
 import org.apache.rocketmq.common.constant.LoggerName;
 import org.apache.rocketmq.common.protocol.body.KVTable;
 import org.apache.rocketmq.namesrv.NamesrvController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class KVConfigManager {
     private static final Logger log = LoggerFactory.getLogger(LoggerName.NAMESRV_LOGGER_NAME);
@@ -43,7 +44,12 @@ public class KVConfigManager {
     }
 
     public void load() {
-        String content = MixAll.file2String(this.namesrvController.getNamesrvConfig().getKvConfigPath());
+        String content = null;
+        try {
+            content = MixAll.file2String(this.namesrvController.getNamesrvConfig().getKvConfigPath());
+        } catch (IOException e) {
+            log.warn("Load KV config table exception", e);
+        }
         if (content != null) {
             KVConfigSerializeWrapper kvConfigSerializeWrapper =
                 KVConfigSerializeWrapper.fromJson(content, KVConfigSerializeWrapper.class);
@@ -67,10 +73,10 @@ public class KVConfigManager {
 
                 final String prev = kvTable.put(key, value);
                 if (null != prev) {
-                    log.info("putKVConfig update config item, Namespace: {} Key: {} Value: {}", //
+                    log.info("putKVConfig update config item, Namespace: {} Key: {} Value: {}",
                         namespace, key, value);
                 } else {
-                    log.info("putKVConfig create new config item, Namespace: {} Key: {} Value: {}", //
+                    log.info("putKVConfig create new config item, Namespace: {} Key: {} Value: {}",
                         namespace, key, value);
                 }
             } finally {
@@ -114,7 +120,7 @@ public class KVConfigManager {
                 HashMap<String, String> kvTable = this.configTable.get(namespace);
                 if (null != kvTable) {
                     String value = kvTable.remove(key);
-                    log.info("deleteKVConfig delete a config item, Namespace: {} Key: {} Value: {}", //
+                    log.info("deleteKVConfig delete a config item, Namespace: {} Key: {} Value: {}",
                         namespace, key, value);
                 }
             } finally {

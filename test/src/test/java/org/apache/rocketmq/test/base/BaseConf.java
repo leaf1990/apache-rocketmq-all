@@ -17,8 +17,6 @@
 
 package org.apache.rocketmq.test.base;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.rocketmq.broker.BrokerController;
 import org.apache.rocketmq.namesrv.NamesrvController;
@@ -31,8 +29,9 @@ import org.apache.rocketmq.test.factory.ConsumerFactory;
 import org.apache.rocketmq.test.listener.AbstractListener;
 import org.apache.rocketmq.test.util.MQAdmin;
 import org.apache.rocketmq.test.util.MQRandomUtils;
-import org.apache.rocketmq.test.util.TestUtils;
-import org.junit.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BaseConf {
     protected static String nsAddr;
@@ -41,8 +40,7 @@ public class BaseConf {
     protected static String clusterName;
     protected static int brokerNum;
     protected static int waitTime = 5;
-    protected static int consumeTime = 1 * 60 * 1000;
-    protected static int topicCreateTime = 30 * 1000;
+    protected static int consumeTime = 5 * 60 * 1000;
     protected static NamesrvController namesrvController;
     protected static BrokerController brokerController1;
     protected static BrokerController brokerController2;
@@ -66,22 +64,8 @@ public class BaseConf {
     }
 
     public static String initTopic() {
-        long startTime = System.currentTimeMillis();
         String topic = MQRandomUtils.getRandomTopic();
-        boolean createResult = false;
-        while (true) {
-            createResult = MQAdmin.createTopic(nsAddr, clusterName, topic, 8);
-            if (createResult) {
-                break;
-            } else if (System.currentTimeMillis() - startTime > topicCreateTime) {
-                Assert.fail(String.format("topic[%s] is created failed after:%d ms", topic,
-                    System.currentTimeMillis() - startTime));
-                break;
-            } else {
-                TestUtils.waitForMonment(500);
-                continue;
-            }
-        }
+        IntegrationTestBase.initTopic(topic, nsAddr, clusterName);
 
         return topic;
     }

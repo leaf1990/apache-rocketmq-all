@@ -16,10 +16,6 @@
  */
 package org.apache.rocketmq.tools.command.topic;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -31,6 +27,12 @@ import org.apache.rocketmq.remoting.RPCHook;
 import org.apache.rocketmq.remoting.protocol.RemotingSerializable;
 import org.apache.rocketmq.tools.admin.DefaultMQAdminExt;
 import org.apache.rocketmq.tools.command.SubCommand;
+import org.apache.rocketmq.tools.command.SubCommandException;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class AllocateMQSubCommand implements SubCommand {
     @Override
@@ -57,7 +59,7 @@ public class AllocateMQSubCommand implements SubCommand {
     }
 
     @Override
-    public void execute(CommandLine commandLine, Options options, RPCHook rpcHook) {
+    public void execute(CommandLine commandLine, Options options, RPCHook rpcHook) throws SubCommandException {
         DefaultMQAdminExt adminExt = new DefaultMQAdminExt(rpcHook);
         adminExt.setInstanceName(Long.toString(System.currentTimeMillis()));
         try {
@@ -86,7 +88,7 @@ public class AllocateMQSubCommand implements SubCommand {
             final String json = RemotingSerializable.toJson(rr, false);
             System.out.printf("%s%n", json);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new SubCommandException(this.getClass().getSimpleName() + " command failed", e);
         } finally {
             adminExt.shutdown();
         }

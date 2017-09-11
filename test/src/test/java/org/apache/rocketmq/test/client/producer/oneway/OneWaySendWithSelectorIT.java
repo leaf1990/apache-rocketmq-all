@@ -17,7 +17,6 @@
 
 package org.apache.rocketmq.test.client.producer.oneway;
 
-import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.rocketmq.client.producer.MessageQueueSelector;
 import org.apache.rocketmq.common.message.Message;
@@ -31,6 +30,8 @@ import org.apache.rocketmq.test.util.VerifyUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -71,12 +72,12 @@ public class OneWaySendWithSelectorIT extends BaseConf {
         });
         assertThat(producer.getAllMsgBody().size()).isEqualTo(msgSize);
 
-        consumer.getListner().waitForMessageConsume(producer.getAllMsgBody(), consumeTime);
+        consumer.getListener().waitForMessageConsume(producer.getAllMsgBody(), consumeTime);
         assertThat(VerifyUtils.getFilterdMessage(producer.getAllMsgBody(),
-            consumer.getListner().getAllMsgBody()))
+            consumer.getListener().getAllMsgBody()))
             .containsExactlyElementsIn(producer.getAllMsgBody());
 
-        VerifyUtils.verifyMessageQueueId(queueId, consumer.getListner().getAllOriginMsg());
+        VerifyUtils.verifyMessageQueueId(queueId, consumer.getListener().getAllOriginMsg());
 
         producer.clearMsg();
         consumer.clearMsg();
@@ -94,11 +95,11 @@ public class OneWaySendWithSelectorIT extends BaseConf {
         });
         assertThat(producer.getAllMsgBody().size()).isEqualTo(msgSize);
 
-        consumer.getListner().waitForMessageConsume(producer.getAllMsgBody(), consumeTime);
+        consumer.getListener().waitForMessageConsume(producer.getAllMsgBody(), consumeTime);
         assertThat(VerifyUtils.getFilterdMessage(producer.getAllMsgBody(),
-            consumer.getListner().getAllMsgBody()))
+            consumer.getListener().getAllMsgBody()))
             .containsExactlyElementsIn(producer.getAllMsgBody());
 
-        VerifyUtils.verifyMessageQueueId(queueId, consumer.getListner().getAllOriginMsg());
+        VerifyUtils.verifyMessageQueueId(queueId, consumer.getListener().getAllOriginMsg());
     }
 }

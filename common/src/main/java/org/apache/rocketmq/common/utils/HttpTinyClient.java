@@ -17,6 +17,9 @@
 
 package org.apache.rocketmq.common.utils;
 
+import org.apache.rocketmq.common.MQVersion;
+import org.apache.rocketmq.common.MixAll;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -24,8 +27,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.rocketmq.common.MQVersion;
-import org.apache.rocketmq.common.MixAll;
 
 public class HttpTinyClient {
 
@@ -90,13 +91,7 @@ public class HttpTinyClient {
     }
 
     /**
-     * @param url
-     * @param headers
-     * @param paramValues
-     * @param encoding
-     * @param readTimeoutMs
      * @return the http response of given http post request
-     * @throws java.io.IOException
      */
     static public HttpResult httpPost(String url, List<String> headers, List<String> paramValues,
         String encoding, long readTimeoutMs) throws IOException {

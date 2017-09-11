@@ -17,24 +17,6 @@
 
 package org.apache.rocketmq.filtersrv.filter;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.common.UtilAll;
 import org.apache.rocketmq.common.constant.LoggerName;
@@ -43,8 +25,17 @@ import org.apache.rocketmq.remoting.common.RemotingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.URLDecoder;
+import java.util.*;
+
 public class DynaCode {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggerName.FILTERSRV_LOGGER_NAME);
+    private static final Logger log = LoggerFactory.getLogger(LoggerName.FILTERSRV_LOGGER_NAME);
 
     private static final String FILE_SP = System.getProperty("file.separator");
 
@@ -71,9 +62,8 @@ public class DynaCode {
 
     private String target;
 
-    @SuppressWarnings("unchecked")
     public DynaCode(String code) {
-        this(Thread.currentThread().getContextClassLoader(), Arrays.asList(code));
+        this(Thread.currentThread().getContextClassLoader(), Collections.singletonList(code));
     }
 
     public DynaCode(ClassLoader parentClassLoader, List<String> codeStrs) {
@@ -232,7 +222,7 @@ public class DynaCode {
                             loadClass.put(getFullClassName(code), null);
                         }
                         if (null != srcFile) {
-                            LOGGER.warn("Dyna Create Java Source File:---->" + srcFile.getAbsolutePath());
+                            log.warn("Dyna Create Java Source File:----> {}", srcFile.getAbsolutePath());
                             srcFileAbsolutePaths.add(srcFile.getAbsolutePath());
                             srcFile.deleteOnExit();
                         }
@@ -278,9 +268,9 @@ public class DynaCode {
                 Class<?> classz = classLoader.loadClass(key);
                 if (null != classz) {
                     loadClass.put(key, classz);
-                    LOGGER.info("Dyna Load Java Class File OK:----> className: " + key);
+                    log.info("Dyna Load Java Class File OK:----> className: {}", key);
                 } else {
-                    LOGGER.error("Dyna Load Java Class File Fail:----> className: " + key);
+                    log.error("Dyna Load Java Class File Fail:----> className: {}", key);
                 }
             }
         }

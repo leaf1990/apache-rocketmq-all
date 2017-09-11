@@ -17,14 +17,15 @@
 
 package org.apache.rocketmq.test.clientinterface;
 
+import org.apache.rocketmq.test.util.RandomUtil;
+import org.apache.rocketmq.test.util.data.collect.DataCollector;
+import org.apache.rocketmq.test.util.data.collect.DataCollectorManager;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.apache.rocketmq.test.util.RandomUtil;
-import org.apache.rocketmq.test.util.data.collect.DataCollector;
-import org.apache.rocketmq.test.util.data.collect.DataCollectorManager;
 
 public abstract class MQCollector {
     protected DataCollector msgBodys = null;
@@ -91,11 +92,21 @@ public abstract class MQCollector {
     }
 
     public void clearMsg() {
-        msgBodys.resetData();
-        originMsgs.resetData();
-        errorMsgs.resetData();
-        originMsgIndex.clear();
-        msgRTs.resetData();
+        if (msgBodys != null) {
+            msgBodys.resetData();
+        }
+        if (originMsgs != null) {
+            originMsgs.resetData();
+        }
+        if (originMsgs != null) {
+            errorMsgs.resetData();
+        }
+        if (originMsgIndex != null) {
+            originMsgIndex.clear();
+        }
+        if (msgRTs != null) {
+            msgRTs.resetData();
+        }
     }
 
     public void lockCollectors() {

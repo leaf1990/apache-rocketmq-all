@@ -16,8 +16,6 @@
  */
 package org.apache.rocketmq.tools.command.broker;
 
-import java.util.Properties;
-import java.util.Set;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -26,6 +24,10 @@ import org.apache.rocketmq.srvutil.ServerUtil;
 import org.apache.rocketmq.tools.admin.DefaultMQAdminExt;
 import org.apache.rocketmq.tools.command.CommandUtil;
 import org.apache.rocketmq.tools.command.SubCommand;
+import org.apache.rocketmq.tools.command.SubCommandException;
+
+import java.util.Properties;
+import java.util.Set;
 
 public class UpdateBrokerConfigSubCommand implements SubCommand {
 
@@ -61,7 +63,7 @@ public class UpdateBrokerConfigSubCommand implements SubCommand {
     }
 
     @Override
-    public void execute(CommandLine commandLine, Options options, RPCHook rpcHook) {
+    public void execute(CommandLine commandLine, Options options, RPCHook rpcHook) throws SubCommandException {
         DefaultMQAdminExt defaultMQAdminExt = new DefaultMQAdminExt(rpcHook);
 
         defaultMQAdminExt.setInstanceName(Long.toString(System.currentTimeMillis()));
@@ -101,7 +103,7 @@ public class UpdateBrokerConfigSubCommand implements SubCommand {
 
             ServerUtil.printCommandLineHelp("mqadmin " + this.commandName(), options);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new SubCommandException(this.getClass().getSimpleName() + " command failed", e);
         } finally {
             defaultMQAdminExt.shutdown();
         }

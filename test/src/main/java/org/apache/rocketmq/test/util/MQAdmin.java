@@ -17,8 +17,6 @@
 
 package org.apache.rocketmq.test.util;
 
-import java.util.HashMap;
-import java.util.Set;
 import org.apache.log4j.Logger;
 import org.apache.rocketmq.common.admin.TopicStatsTable;
 import org.apache.rocketmq.common.protocol.body.ClusterInfo;
@@ -26,6 +24,9 @@ import org.apache.rocketmq.common.protocol.route.BrokerData;
 import org.apache.rocketmq.common.subscription.SubscriptionGroupConfig;
 import org.apache.rocketmq.tools.admin.DefaultMQAdminExt;
 import org.apache.rocketmq.tools.command.CommandUtil;
+
+import java.util.HashMap;
+import java.util.Set;
 
 public class MQAdmin {
     private static Logger log = Logger.getLogger(MQAdmin.class);
@@ -45,14 +46,13 @@ public class MQAdmin {
             mqAdminExt.start();
             mqAdminExt.createTopic(clusterName, topic, queueNum);
         } catch (Exception e) {
-            e.printStackTrace();
         }
 
         long startTime = System.currentTimeMillis();
         while (!createResult) {
             createResult = checkTopicExist(mqAdminExt, topic);
             if (System.currentTimeMillis() - startTime < waitTimeSec * 1000) {
-                TestUtils.waitForMonment(100);
+                TestUtils.waitForMoment(100);
             } else {
                 log.error(String.format("timeout,but create topic[%s] failed!", topic));
                 break;

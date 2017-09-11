@@ -17,16 +17,18 @@
 
 package org.apache.rocketmq.common.stats;
 
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import org.apache.rocketmq.common.UtilAll;
 import org.slf4j.Logger;
 
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 public class StatsItemSet {
-    private final ConcurrentHashMap<String/* key */, StatsItem> statsItemTable =
+    private final ConcurrentMap<String/* key */, StatsItem> statsItemTable =
         new ConcurrentHashMap<String, StatsItem>(128);
 
     private final String statsName;

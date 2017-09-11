@@ -16,9 +16,6 @@
  */
 package org.apache.rocketmq.client.impl.factory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import org.apache.rocketmq.client.ClientConfig;
 import org.apache.rocketmq.client.admin.MQAdminExtInner;
 import org.apache.rocketmq.client.exception.MQBrokerException;
@@ -34,12 +31,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MQClientInstanceTest {
-    private MQClientInstance mqClientInstance =  MQClientManager.getInstance().getAndCreateMQClientInstance(new ClientConfig());
+    private MQClientInstance mqClientInstance = MQClientManager.getInstance().getAndCreateMQClientInstance(new ClientConfig());
     private String topic = "FooBar";
     private String group = "FooBarGroup";
 
@@ -48,17 +49,17 @@ public class MQClientInstanceTest {
         TopicRouteData topicRouteData = new TopicRouteData();
 
         topicRouteData.setFilterServerTable(new HashMap<String, List<String>>());
-        List<BrokerData> brokerDataList = new ArrayList<>();
+        List<BrokerData> brokerDataList = new ArrayList<BrokerData>();
         BrokerData brokerData = new BrokerData();
         brokerData.setBrokerName("BrokerA");
         brokerData.setCluster("DefaultCluster");
-        HashMap<Long, String> brokerAddrs = new HashMap<>();
+        HashMap<Long, String> brokerAddrs = new HashMap<Long, String>();
         brokerAddrs.put(0L, "127.0.0.1:10911");
         brokerData.setBrokerAddrs(brokerAddrs);
         brokerDataList.add(brokerData);
         topicRouteData.setBrokerDatas(brokerDataList);
 
-        List<QueueData> queueDataList = new ArrayList<>();
+        List<QueueData> queueDataList = new ArrayList<QueueData>();
         QueueData queueData = new QueueData();
         queueData.setBrokerName("BrokerA");
         queueData.setPerm(6);

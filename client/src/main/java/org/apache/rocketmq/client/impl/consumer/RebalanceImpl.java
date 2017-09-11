@@ -16,16 +16,6 @@
  */
 package org.apache.rocketmq.client.impl.consumer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import org.apache.rocketmq.client.consumer.AllocateMessageQueueStrategy;
 import org.apache.rocketmq.client.impl.FindBrokerResult;
 import org.apache.rocketmq.client.impl.factory.MQClientInstance;
@@ -39,22 +29,28 @@ import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 import org.apache.rocketmq.common.protocol.heartbeat.SubscriptionData;
 import org.slf4j.Logger;
 
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 /**
  * Base class for rebalance algorithm
  */
 public abstract class RebalanceImpl {
     protected static final Logger log = ClientLogger.getLog();
-    protected final ConcurrentHashMap<MessageQueue, ProcessQueue> processQueueTable = new ConcurrentHashMap<MessageQueue, ProcessQueue>(64);
-    protected final ConcurrentHashMap<String/* topic */, Set<MessageQueue>> topicSubscribeInfoTable =
+    protected final ConcurrentMap<MessageQueue, ProcessQueue> processQueueTable = new ConcurrentHashMap<MessageQueue, ProcessQueue>(64);
+    protected final ConcurrentMap<String/* topic */, Set<MessageQueue>> topicSubscribeInfoTable =
         new ConcurrentHashMap<String, Set<MessageQueue>>();
-    protected final ConcurrentHashMap<String /* topic */, SubscriptionData> subscriptionInner =
+    protected final ConcurrentMap<String /* topic */, SubscriptionData> subscriptionInner =
         new ConcurrentHashMap<String, SubscriptionData>();
     protected String consumerGroup;
     protected MessageModel messageModel;
     protected AllocateMessageQueueStrategy allocateMessageQueueStrategy;
     protected MQClientInstance mQClientFactory;
 
-    public RebalanceImpl(String consumerGroup, MessageModel messageModel, AllocateMessageQueueStrategy allocateMessageQueueStrategy,
+    public RebalanceImpl(String consumerGroup, MessageModel messageModel,
+        AllocateMessageQueueStrategy allocateMessageQueueStrategy,
         MQClientInstance mQClientFactory) {
         this.consumerGroup = consumerGroup;
         this.messageModel = messageModel;
@@ -72,9 +68,9 @@ public abstract class RebalanceImpl {
 
             try {
                 this.mQClientFactory.getMQClientAPIImpl().unlockBatchMQ(findBrokerResult.getBrokerAddr(), requestBody, 1000, oneway);
-                log.warn("unlock messageQueue. group:{}, clientId:{}, mq:{}", //
-                    this.consumerGroup, //
-                    this.mQClientFactory.getClientId(), //
+                log.warn("unlock messageQueue. group:{}, clientId:{}, mq:{}",
+                    this.consumerGroup,
+                    this.mQClientFactory.getClientId(),
                     mq);
             } catch (Exception e) {
                 log.error("unlockBatchMQ exception, " + mq, e);
@@ -232,7 +228,7 @@ public abstract class RebalanceImpl {
         this.truncateMessageQueueNotMyTopic();
     }
 
-    public ConcurrentHashMap<String, SubscriptionData> getSubscriptionInner() {
+    public ConcurrentMap<String, SubscriptionData> getSubscriptionInner() {
         return subscriptionInner;
     }
 
@@ -244,10 +240,10 @@ public abstract class RebalanceImpl {
                     boolean changed = this.updateProcessQueueTableInRebalance(topic, mqSet, isOrder);
                     if (changed) {
                         this.messageQueueChanged(topic, mqSet, mqSet);
-                        log.info("messageQueueChanged {} {} {} {}", //
-                            consumerGroup, //
-                            topic, //
-                            mqSet, //
+                        log.info("messageQueueChanged {} {} {} {}",
+                            consumerGroup,
+                            topic,
+                            mqSet,
                             mqSet);
                     }
                 } else {
@@ -279,10 +275,10 @@ public abstract class RebalanceImpl {
 
                     List<MessageQueue> allocateResult = null;
                     try {
-                        allocateResult = strategy.allocate(//
-                            this.consumerGroup, //
-                            this.mQClientFactory.getClientId(), //
-                            mqAll, //
+                        allocateResult = strategy.allocate(
+                            this.consumerGroup,
+                            this.mQClientFactory.getClientId(),
+                            mqAll,
                             cidAll);
                     } catch (Throwable e) {
                         log.error("AllocateMessageQueueStrategy.allocate Exception. allocateMessageQueueStrategyName={}", strategy.getName(),
@@ -326,7 +322,8 @@ public abstract class RebalanceImpl {
         }
     }
 
-    private boolean updateProcessQueueTableInRebalance(final String topic, final Set<MessageQueue> mqSet, final boolean isOrder) {
+    private boolean updateProcessQueueTableInRebalance(final String topic, final Set<MessageQueue> mqSet,
+        final boolean isOrder) {
         boolean changed = false;
 
         Iterator<Entry<MessageQueue, ProcessQueue>> it = this.processQueueTable.entrySet().iterator();
@@ -399,7 +396,8 @@ public abstract class RebalanceImpl {
         return changed;
     }
 
-    public abstract void messageQueueChanged(final String topic, final Set<MessageQueue> mqAll, final Set<MessageQueue> mqDivided);
+    public abstract void messageQueueChanged(final String topic, final Set<MessageQueue> mqAll,
+        final Set<MessageQueue> mqDivided);
 
     public abstract boolean removeUnnecessaryMessageQueue(final MessageQueue mq, final ProcessQueue pq);
 
@@ -421,11 +419,11 @@ public abstract class RebalanceImpl {
         }
     }
 
-    public ConcurrentHashMap<MessageQueue, ProcessQueue> getProcessQueueTable() {
+    public ConcurrentMap<MessageQueue, ProcessQueue> getProcessQueueTable() {
         return processQueueTable;
     }
 
-    public ConcurrentHashMap<String, Set<MessageQueue>> getTopicSubscribeInfoTable() {
+    public ConcurrentMap<String, Set<MessageQueue>> getTopicSubscribeInfoTable() {
         return topicSubscribeInfoTable;
     }
 

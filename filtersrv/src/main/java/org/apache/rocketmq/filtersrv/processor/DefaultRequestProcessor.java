@@ -20,10 +20,6 @@ package org.apache.rocketmq.filtersrv.processor;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.rocketmq.client.consumer.DefaultMQPullConsumer;
 import org.apache.rocketmq.client.consumer.PullCallback;
 import org.apache.rocketmq.client.consumer.PullResult;
@@ -49,6 +45,11 @@ import org.apache.rocketmq.remoting.protocol.RemotingCommand;
 import org.apache.rocketmq.store.CommitLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DefaultRequestProcessor implements NettyRequestProcessor {
     private static final Logger log = LoggerFactory.getLogger(LoggerName.FILTERSRV_LOGGER_NAME);
@@ -83,7 +84,8 @@ public class DefaultRequestProcessor implements NettyRequestProcessor {
         return false;
     }
 
-    private RemotingCommand registerMessageFilterClass(ChannelHandlerContext ctx, RemotingCommand request) throws RemotingCommandException {
+    private RemotingCommand registerMessageFilterClass(ChannelHandlerContext ctx,
+        RemotingCommand request) throws RemotingCommandException {
         final RemotingCommand response = RemotingCommand.createResponseCommand(null);
         final RegisterMessageFilterClassRequestHeader requestHeader =
             (RegisterMessageFilterClassRequestHeader) request.decodeCommandCustomHeader(RegisterMessageFilterClassRequestHeader.class);
@@ -108,7 +110,8 @@ public class DefaultRequestProcessor implements NettyRequestProcessor {
         return response;
     }
 
-    private RemotingCommand pullMessageForward(final ChannelHandlerContext ctx, final RemotingCommand request) throws Exception {
+    private RemotingCommand pullMessageForward(final ChannelHandlerContext ctx,
+        final RemotingCommand request) throws Exception {
         final RemotingCommand response = RemotingCommand.createResponseCommand(PullMessageResponseHeader.class);
         final PullMessageResponseHeader responseHeader = (PullMessageResponseHeader) response.readCustomHeader();
         final PullMessageRequestHeader requestHeader =
@@ -215,7 +218,8 @@ public class DefaultRequestProcessor implements NettyRequestProcessor {
         return null;
     }
 
-    private void returnResponse(final String group, final String topic, ChannelHandlerContext ctx, final RemotingCommand response,
+    private void returnResponse(final String group, final String topic, ChannelHandlerContext ctx,
+        final RemotingCommand response,
         final List<MessageExt> msgList) {
         if (null != msgList) {
             ByteBuffer[] msgBufferList = new ByteBuffer[msgList.size()];

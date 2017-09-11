@@ -17,14 +17,15 @@
 
 package org.apache.rocketmq.client;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.common.MixAll;
 import org.apache.rocketmq.common.UtilAll;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.common.protocol.ResponseCode;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Common Validator
@@ -35,8 +36,6 @@ public class Validators {
     public static final int CHARACTER_MAX_LENGTH = 255;
 
     /**
-     * @param origin
-     * @param patternStr
      * @return The resulting {@code String}
      */
     public static String getGroupWithRegularExpression(String origin, String patternStr) {
@@ -50,9 +49,6 @@ public class Validators {
 
     /**
      * Validate group
-     *
-     * @param group
-     * @throws MQClientException
      */
     public static void checkGroup(String group) throws MQClientException {
         if (UtilAll.isBlank(group)) {
@@ -69,8 +65,6 @@ public class Validators {
     }
 
     /**
-     * @param origin
-     * @param pattern
      * @return <tt>true</tt> if, and only if, the entire origin sequence matches this matcher's pattern
      */
     public static boolean regularExpressionMatcher(String origin, Pattern pattern) {
@@ -83,10 +77,6 @@ public class Validators {
 
     /**
      * Validate message
-     *
-     * @param msg
-     * @param defaultMQProducer
-     * @throws MQClientException
      */
     public static void checkMessage(Message msg, DefaultMQProducer defaultMQProducer)
         throws MQClientException {
@@ -95,6 +85,7 @@ public class Validators {
         }
         // topic
         Validators.checkTopic(msg.getTopic());
+
         // body
         if (null == msg.getBody()) {
             throw new MQClientException(ResponseCode.MESSAGE_ILLEGAL, "the message body is null");
@@ -112,9 +103,6 @@ public class Validators {
 
     /**
      * Validate topic
-     *
-     * @param topic
-     * @throws MQClientException
      */
     public static void checkTopic(String topic) throws MQClientException {
         if (UtilAll.isBlank(topic)) {

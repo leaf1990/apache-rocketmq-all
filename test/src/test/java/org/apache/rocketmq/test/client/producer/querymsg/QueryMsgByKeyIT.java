@@ -17,7 +17,6 @@
 
 package org.apache.rocketmq.test.client.producer.querymsg;
 
-import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.test.base.BaseConf;
@@ -28,6 +27,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -59,7 +60,7 @@ public class QueryMsgByKeyIT extends BaseConf {
 
         List<MessageExt> queryMsgs = null;
         try {
-            TestUtils.waitForMonment(500 * 3);
+            TestUtils.waitForMoment(500 * 3);
             queryMsgs = producer.getProducer().queryMessage(topic, key, msgSize, begin - 5000,
                 System.currentTimeMillis() + 5000).getMessageList();
         } catch (Exception e) {
@@ -89,7 +90,7 @@ public class QueryMsgByKeyIT extends BaseConf {
                 i--;
                 queryMsgs = producer.getProducer().queryMessage(topic, key, msgSize, begin - 15000,
                     System.currentTimeMillis() + 15000).getMessageList();
-                TestUtils.waitForMonment(1000);
+                TestUtils.waitForMoment(1000);
 
                 if (i == 0 || (queryMsgs != null && queryMsgs.size() == max)) {
                     break;

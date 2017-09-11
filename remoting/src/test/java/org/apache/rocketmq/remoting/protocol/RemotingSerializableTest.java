@@ -16,9 +16,10 @@
  */
 package org.apache.rocketmq.remoting.protocol;
 
+import org.junit.Test;
+
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -86,7 +87,7 @@ class Sample {
     private String stringValue = "string";
     private int intValue = 2333;
     private Integer integerValue = 666;
-    private double[] doubleArray = new double[]{0.618, 1.618};
+    private double[] doubleArray = new double[] {0.618, 1.618};
     private List<String> stringList = Arrays.asList("a", "o", "e", "i", "u", "v");
 
     public String getStringValue() {
@@ -136,7 +137,7 @@ class Sample {
         if (o == null || getClass() != o.getClass())
             return false;
 
-        Sample sample = (Sample)o;
+        Sample sample = (Sample) o;
 
         if (intValue != sample.intValue)
             return false;

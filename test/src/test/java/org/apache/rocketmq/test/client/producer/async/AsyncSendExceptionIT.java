@@ -17,7 +17,6 @@
 
 package org.apache.rocketmq.test.client.producer.async;
 
-import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.MessageQueueSelector;
@@ -34,6 +33,8 @@ import org.apache.rocketmq.test.util.TestUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -112,7 +113,7 @@ public class AsyncSendExceptionIT extends BaseConf {
         int checkNum = 50;
         while (!sendFail && checkNum > 0) {
             checkNum--;
-            TestUtils.waitForMonment(100);
+            TestUtils.waitForMoment(100);
         }
         producer.shutdown();
         assertThat(sendFail).isEqualTo(true);
@@ -141,7 +142,7 @@ public class AsyncSendExceptionIT extends BaseConf {
         int checkNum = 50;
         while (sendFail && checkNum > 0) {
             checkNum--;
-            TestUtils.waitForMonment(100);
+            TestUtils.waitForMoment(100);
         }
         producer.shutdown();
         assertThat(sendFail).isEqualTo(false);

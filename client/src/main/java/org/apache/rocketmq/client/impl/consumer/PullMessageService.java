@@ -16,15 +16,13 @@
  */
 package org.apache.rocketmq.client.impl.consumer;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
 import org.apache.rocketmq.client.impl.factory.MQClientInstance;
 import org.apache.rocketmq.client.log.ClientLogger;
 import org.apache.rocketmq.common.ServiceThread;
+import org.apache.rocketmq.common.utils.ThreadUtils;
 import org.slf4j.Logger;
+
+import java.util.concurrent.*;
 
 public class PullMessageService extends ServiceThread {
     private final Logger log = ClientLogger.getLog();
@@ -95,6 +93,12 @@ public class PullMessageService extends ServiceThread {
         }
 
         log.info(this.getServiceName() + " service end");
+    }
+
+    @Override
+    public void shutdown(boolean interrupt) {
+        super.shutdown(interrupt);
+        ThreadUtils.shutdownGracefully(this.scheduledExecutorService, 1000, TimeUnit.MILLISECONDS);
     }
 
     @Override

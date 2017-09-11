@@ -16,13 +16,15 @@
  */
 package org.apache.rocketmq.tools.command.namesrv;
 
-import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.rocketmq.remoting.RPCHook;
 import org.apache.rocketmq.tools.admin.DefaultMQAdminExt;
 import org.apache.rocketmq.tools.command.SubCommand;
+import org.apache.rocketmq.tools.command.SubCommandException;
+
+import java.util.List;
 
 public class WipeWritePermSubCommand implements SubCommand {
 
@@ -45,7 +47,7 @@ public class WipeWritePermSubCommand implements SubCommand {
     }
 
     @Override
-    public void execute(CommandLine commandLine, Options options, RPCHook rpcHook) {
+    public void execute(CommandLine commandLine, Options options, RPCHook rpcHook) throws SubCommandException {
         DefaultMQAdminExt defaultMQAdminExt = new DefaultMQAdminExt(rpcHook);
 
         defaultMQAdminExt.setInstanceName(Long.toString(System.currentTimeMillis()));
@@ -74,7 +76,7 @@ public class WipeWritePermSubCommand implements SubCommand {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new SubCommandException(this.getClass().getSimpleName() + " command failed", e);
         } finally {
             defaultMQAdminExt.shutdown();
         }

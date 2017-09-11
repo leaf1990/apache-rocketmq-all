@@ -16,7 +16,6 @@
  */
 package org.apache.rocketmq.tools.command.broker;
 
-import java.io.UnsupportedEncodingException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -26,6 +25,9 @@ import org.apache.rocketmq.common.MixAll;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.RPCHook;
 import org.apache.rocketmq.tools.command.SubCommand;
+import org.apache.rocketmq.tools.command.SubCommandException;
+
+import java.io.UnsupportedEncodingException;
 
 public class SendMsgStatusCommand implements SubCommand {
 
@@ -69,7 +71,7 @@ public class SendMsgStatusCommand implements SubCommand {
     }
 
     @Override
-    public void execute(CommandLine commandLine, Options options, RPCHook rpcHook) {
+    public void execute(CommandLine commandLine, Options options, RPCHook rpcHook) throws SubCommandException {
         final DefaultMQProducer producer = new DefaultMQProducer("PID_SMSC", rpcHook);
         producer.setInstanceName("PID_SMSC_" + System.currentTimeMillis());
 
@@ -87,7 +89,7 @@ public class SendMsgStatusCommand implements SubCommand {
                 System.out.printf("rt:" + (System.currentTimeMillis() - begin) + "ms, SendResult=" + result);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new SubCommandException(this.getClass().getSimpleName() + " command failed", e);
         } finally {
             producer.shutdown();
         }
