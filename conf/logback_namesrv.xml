@@ -17,6 +17,13 @@
   -->
 
 <configuration>
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <Encoding>UTF-8</Encoding>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%date [%thread] %-5level %logger{50}:%L - %msg%n</pattern>
+        </layout>
+    </appender>
+
     <appender name="DefaultAppender"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${user.home}/logs/rocketmqlogs/namesrv_default.log</file>
@@ -69,7 +76,7 @@
         </encoder>
     </appender>
 
-    <logger name="RocketmqNamesrv" additivity="false">
+   <!-- <logger name="RocketmqNamesrv" additivity="false">
         <level value="INFO"/>
         <appender-ref ref="RocketmqNamesrvAppender"/>
     </logger>
@@ -82,10 +89,10 @@
     <logger name="RocketmqRemoting" additivity="false">
         <level value="INFO"/>
         <appender-ref ref="RocketmqNamesrvAppender"/>
-    </logger>
+    </logger>-->
 
     <root>
-        <level value="INFO"/>
-        <appender-ref ref="DefaultAppender"/>
+        <level value="DEBUG"/>
+        <appender-ref ref="stdout"/>
     </root>
 </configuration>

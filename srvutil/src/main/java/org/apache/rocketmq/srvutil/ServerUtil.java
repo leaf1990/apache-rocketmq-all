@@ -24,8 +24,12 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+/**
+ * 命令行参数解析。通过apache-cli实现
+ */
 public class ServerUtil {
 
+    // 设置help和namersrvAddr命令行参数
     public static Options buildCommandlineOptions(final Options options) {
         Option opt = new Option("h", "help", false, "Print help");
         opt.setRequired(false);

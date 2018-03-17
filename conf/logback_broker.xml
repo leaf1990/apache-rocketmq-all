@@ -266,7 +266,7 @@
         </encoder>
     </appender>
 
-    <logger name="RocketmqBroker" additivity="false">
+    <!--<logger name="RocketmqBroker" additivity="false">
         <level value="INFO"/>
         <appender-ref ref="RocketmqBrokerAppender"/>
     </logger>
@@ -318,11 +318,11 @@
 
     <logger name="RocketmqCommercial" additivity="false">
         <level value="INFO"/>
-        <appender-ref ref="RocketmqCommercialAppender"/>
-    </logger>
+        <appender-ref ref="STDOUT"/>
+    </logger>-->
 
     <root>
-        <level value="INFO"/>
-        <appender-ref ref="DefaultAppender"/>
+        <level value="DEBUG"/>
+        <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

@@ -1,0 +1,15 @@
+broker: 节点
+client: 客户端
+common: 公共类
+conf: 节点配置信息
+example: 样例
+filersrv: 过滤服务
+namersrv: 地址中心服务
+remoting: 网络操作
+srvutil: 服务工具类
+store: 数据存储
+style: 版权信息
+test: 测试
+tools: 工具类
+
+mvn -Prelease-all -DskipTests clean install -U

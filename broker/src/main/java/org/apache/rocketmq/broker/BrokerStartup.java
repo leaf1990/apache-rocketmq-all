@@ -19,6 +19,7 @@ package org.apache.rocketmq.broker;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
@@ -63,6 +64,7 @@ public class BrokerStartup {
             }
 
             log.info(tip);
+            System.out.printf(tip);
             return controller;
         } catch (Throwable e) {
             e.printStackTrace();
@@ -137,6 +139,10 @@ public class BrokerStartup {
             }
 
             MixAll.properties2Object(ServerUtil.commandLine2Properties(commandLine), brokerConfig);
+
+            // TEST
+            brokerConfig.setRocketmqHome(new File("").getAbsolutePath());
+            // TEST
 
             if (null == brokerConfig.getRocketmqHome()) {
                 System.out.printf("Please set the " + MixAll.ROCKETMQ_HOME_ENV

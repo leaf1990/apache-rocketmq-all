@@ -1,0 +1,8 @@
+1. 下载rocketmq源码：https://github.com/apache/rocketmq.
+2. 配置ROCKET_HOME环境变量，broker和namersrv启动时候会去ROCKET_HOME/config中获取log配置.
+3. 作为maven项目导入idea工程中.
+4. 启动org.apache.rocketmq.namesrv.NamesrvStartup.
+5. 启动org.apache.rocketmq.broker.BrokerStartup.
+    -BrokerStartup需要配置启动参数： -n 192.168.199.129:9876， 和jvm参数：-server -Xms1g -Xmx1g -Xmn512m
+    -在启动NamesrvStartup和BrokerStartup修改下log配置，让日志信息打印到控制台
+6. 可以用example中的例子测试了.

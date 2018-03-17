@@ -18,11 +18,6 @@ package org.apache.rocketmq.namesrv;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -38,6 +33,13 @@ import org.apache.rocketmq.srvutil.ServerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class NamesrvStartup {
     public static Properties properties = null;
     public static CommandLine commandLine = null;
@@ -47,19 +49,20 @@ public class NamesrvStartup {
     }
 
     public static NamesrvController main0(String[] args) {
+        // 设置MQ版本号
         System.setProperty(RemotingCommand.REMOTING_VERSION_KEY, Integer.toString(MQVersion.CURRENT_VERSION));
-
+        // socket.sndbuf.size 默认4M
         if (null == System.getProperty(NettySystemConfig.COM_ROCKETMQ_REMOTING_SOCKET_SNDBUF_SIZE)) {
             NettySystemConfig.socketSndbufSize = 4096;
         }
-
+        // socket.rcvbuf.size 默认4M
         if (null == System.getProperty(NettySystemConfig.COM_ROCKETMQ_REMOTING_SOCKET_RCVBUF_SIZE)) {
             NettySystemConfig.socketRcvbufSize = 4096;
         }
 
         try {
             //PackageConflictDetect.detectFastjson();
-
+            // 设置命令行参数解析，-h(help) -n(namesrcAddr) -c(configFile) -p(printConfigItem)
             Options options = ServerUtil.buildCommandlineOptions(new Options());
             commandLine =
                 ServerUtil.parseCmdLine("mqnamesrv", args, buildCommandlineOptions(options),
@@ -95,7 +98,9 @@ public class NamesrvStartup {
             }
 
             MixAll.properties2Object(ServerUtil.commandLine2Properties(commandLine), namesrvConfig);
-
+            // TEST
+            namesrvConfig.setRocketmqHome(new File("").getAbsolutePath());
+            // TEST
             if (null == namesrvConfig.getRocketmqHome()) {
                 System.out.printf("Please set the " + MixAll.ROCKETMQ_HOME_ENV
                     + " variable in your environment to match the location of the RocketMQ installation%n");
@@ -157,6 +162,7 @@ public class NamesrvStartup {
         return null;
     }
 
+    // 设置configFile, printConfigItem命令行参数
     public static Options buildCommandlineOptions(final Options options) {
         Option opt = new Option("c", "configFile", true, "Name server config properties file");
         opt.setRequired(false);
