@@ -1,0 +1,37 @@
+为什么阅读RocketMQ源码？
+    深入了解 MQ ，知其然知其所以然，了解MQ是如何实现高性能、高可用
+    最终一致行，是如何通过 MQ 进行实现
+    了解分布式在MQ中的应用
+    了解 Netty 在分布式中间件如何实现网络通信以及各种异常场景的处理
+    了解 MQ 消息存储，特别是磁盘 IO 部分
+    最重要的，希望通过阅读源码，在技术上的认知和能力上，有新的突破
+
+源码阅读步骤：
+    namesrv启动
+    broker启动
+    producer启动
+    consumer启动
+    消息唯一编号
+    producer发送消息
+    broker接收消息
+    broker发送消息
+    consumer接受消息
+        多消费者
+        重试消息
+    consumer消息确认
+    broker队列模型
+    broker store消息存储
+    顺序消息
+    事务消息
+    定时(延迟)消息
+    pub/sub模型
+    namesrv集群
+    broker主从
+    filtersrv过滤消息
+    remoting netty网络
+    跨机房
+    Hook机制
+    Tool-Admin
+    Tool-Command
+    Tool-Monitor
+    broker主备切换
