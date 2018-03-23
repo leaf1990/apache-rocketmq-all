@@ -150,7 +150,8 @@ public class RouteInfoManager {
 
                 if (null != topicConfigWrapper //
                     && MixAll.MASTER_ID == brokerId) { // brokerId=0 表示是master节点
-                    if (this.isBrokerTopicConfigChanged(brokerAddr, topicConfigWrapper.getDataVersion())//
+                    //比对BrokerLiveInfo.dataVersion 和 topicConfigWrapper.getDataVersion()
+                    if (this.isBrokerTopicConfigChanged(brokerAddr, topicConfigWrapper.getDataVersion())
                         || registerFirst) {
                         ConcurrentHashMap<String, TopicConfig> tcTable =
                             topicConfigWrapper.getTopicConfigTable();
@@ -161,7 +162,7 @@ public class RouteInfoManager {
                         }
                     }
                 }
-
+                // 保存broker存活信息，用于心跳检测
                 BrokerLiveInfo prevBrokerLiveInfo = this.brokerLiveTable.put(brokerAddr,
                     new BrokerLiveInfo(
                         System.currentTimeMillis(),
@@ -209,6 +210,10 @@ public class RouteInfoManager {
         return false;
     }
 
+    /**
+     * 创建队列信息，同一个broker下的同一个topic只有一个队列
+     * TopicQueueTable<Topic, [broker queue, broker queue]>
+     */
     private void createAndUpdateQueueData(final String brokerName, final TopicConfig topicConfig) {
         QueueData queueData = new QueueData();
         queueData.setBrokerName(brokerName);
@@ -366,6 +371,12 @@ public class RouteInfoManager {
         }
     }
 
+    /**
+     private String orderTopicConf;
+     private List<QueueData> queueDatas;
+     private List<BrokerData> brokerDatas;
+     private HashMap<String, List<String>> filterServerTable;
+     */
     public TopicRouteData pickupTopicRouteData(final String topic) {
         TopicRouteData topicRouteData = new TopicRouteData();
         boolean foundQueueData = false;

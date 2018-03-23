@@ -72,34 +72,34 @@ public class DefaultRequestProcessor implements NettyRequestProcessor {
         }
 
         switch (request.getCode()) {
-            case RequestCode.PUT_KV_CONFIG:
+            case RequestCode.PUT_KV_CONFIG: // 增加KV Config
                 return this.putKVConfig(ctx, request);
-            case RequestCode.GET_KV_CONFIG:
+            case RequestCode.GET_KV_CONFIG: // 获取KV Config
                 return this.getKVConfig(ctx, request);
-            case RequestCode.DELETE_KV_CONFIG:
+            case RequestCode.DELETE_KV_CONFIG: // 删除KV Config
                 return this.deleteKVConfig(ctx, request);
-            case RequestCode.REGISTER_BROKER:
+            case RequestCode.REGISTER_BROKER: // 注册broker
                 Version brokerVersion = MQVersion.value2Version(request.getVersion());
                 if (brokerVersion.ordinal() >= MQVersion.Version.V3_0_11.ordinal()) {
                     return this.registerBrokerWithFilterServer(ctx, request);
                 } else {
                     return this.registerBroker(ctx, request);
                 }
-            case RequestCode.UNREGISTER_BROKER:
+            case RequestCode.UNREGISTER_BROKER: // 移除broker
                 return this.unregisterBroker(ctx, request);
-            case RequestCode.GET_ROUTEINTO_BY_TOPIC:
+            case RequestCode.GET_ROUTEINTO_BY_TOPIC: // 获取topic queue broker信息
                 return this.getRouteInfoByTopic(ctx, request);
-            case RequestCode.GET_BROKER_CLUSTER_INFO:
+            case RequestCode.GET_BROKER_CLUSTER_INFO: // 获取borker集群信息
                 return this.getBrokerClusterInfo(ctx, request);
-            case RequestCode.WIPE_WRITE_PERM_OF_BROKER:
+            case RequestCode.WIPE_WRITE_PERM_OF_BROKER: // 移除broker对队列的写权限
                 return this.wipeWritePermOfBroker(ctx, request);
-            case RequestCode.GET_ALL_TOPIC_LIST_FROM_NAMESERVER:
+            case RequestCode.GET_ALL_TOPIC_LIST_FROM_NAMESERVER: // 获取该nameServer的所有topic名称
                 return getAllTopicListFromNameserver(ctx, request);
-            case RequestCode.DELETE_TOPIC_IN_NAMESRV:
+            case RequestCode.DELETE_TOPIC_IN_NAMESRV: // 删除该nameServer的topic
                 return deleteTopicInNamesrv(ctx, request);
-            case RequestCode.GET_KVLIST_BY_NAMESPACE:
+            case RequestCode.GET_KVLIST_BY_NAMESPACE: // 通过namespace获取所有的KV Config
                 return this.getKVListByNamespace(ctx, request);
-            case RequestCode.GET_TOPICS_BY_CLUSTER:
+            case RequestCode.GET_TOPICS_BY_CLUSTER: // 获取指定集群的所有topic
                 return this.getTopicsByCluster(ctx, request);
             case RequestCode.GET_SYSTEM_TOPIC_LIST_FROM_NS:
                 return this.getSystemTopicListFromNs(ctx, request);
