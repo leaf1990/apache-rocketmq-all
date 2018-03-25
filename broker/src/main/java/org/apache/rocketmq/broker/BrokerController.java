@@ -72,8 +72,11 @@ public class BrokerController {
     private final NettyClientConfig nettyClientConfig;
     private final MessageStoreConfig messageStoreConfig;
     private final ConsumerOffsetManager consumerOffsetManager;
+    // 维护consumer连接信息
     private final ConsumerManager consumerManager;
+    // 维护producer连接信息
     private final ProducerManager producerManager;
+    // 维护各种连接信息，定时扫描检测心跳存活
     private final ClientHousekeepingService clientHousekeepingService;
     private final PullMessageProcessor pullMessageProcessor;
     private final PullRequestHoldService pullRequestHoldService;
@@ -244,6 +247,7 @@ public class BrokerController {
             this.registerProcessor();
 
             // TODO remove in future
+            // 定时打印昨天的消息put/get信息
             final long initialDelay = UtilAll.computNextMorningTimeMillis() - System.currentTimeMillis();
             final long period = 1000 * 60 * 60 * 24;
             this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
@@ -257,6 +261,7 @@ public class BrokerController {
                 }
             }, initialDelay, period, TimeUnit.MILLISECONDS);
 
+            // 定时保存消费者消费进度信息，默认5秒一次
             this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
@@ -268,6 +273,7 @@ public class BrokerController {
                 }
             }, 1000 * 10, this.brokerConfig.getFlushConsumerOffsetInterval(), TimeUnit.MILLISECONDS);
 
+            // 定时判断并移除网络不顺畅的consumer连接
             this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
@@ -279,6 +285,7 @@ public class BrokerController {
                 }
             }, 3, 3, TimeUnit.MINUTES);
 
+            // 定时打印Send Queue Size，Pull Queue Size和任务延迟
             this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
@@ -288,7 +295,8 @@ public class BrokerController {
                         log.error("printWaterMark error.", e);
                     }
                 }
-            }, 10, 1, TimeUnit.SECONDS);
+            //}, 10, 1, TimeUnit.SECONDS);
+            }, 10, 1, TimeUnit.MINUTES);
 
             this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
@@ -302,6 +310,7 @@ public class BrokerController {
                 }
             }, 1000 * 10, 1000 * 60, TimeUnit.MILLISECONDS);
 
+            // 获取nameerver地址，如果没有设置。则会从MixAll.WS_ADDR + "-" + this.unitName + "?nofix=1"中获取
             if (this.brokerConfig.getNamesrvAddr() != null) {
                 this.brokerOuterAPI.updateNameServerAddressList(this.brokerConfig.getNamesrvAddr());
                 log.info("Set user specified name server address: {}", this.brokerConfig.getNamesrvAddr());
@@ -327,6 +336,7 @@ public class BrokerController {
                     this.updateMasterHAServerAddrPeriodically = true;
                 }
 
+                // slave定时同步master的topic, consumerOffset, delayOffset, SubscriptionGroup信息
                 this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
                     @Override
@@ -605,6 +615,7 @@ public class BrokerController {
             this.remotingServer.start();
         }
 
+        // VIP 通道，broker slave通讯使用
         if (this.fastRemotingServer != null) {
             this.fastRemotingServer.start();
         }
@@ -627,6 +638,7 @@ public class BrokerController {
 
         this.registerBrokerAll(true, false);
 
+        // 每隔30秒向所有的nameServer注册broker
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
             @Override
@@ -639,10 +651,12 @@ public class BrokerController {
             }
         }, 1000 * 10, 1000 * 30, TimeUnit.MILLISECONDS);
 
+        // broker指标统计
         if (this.brokerStatsManager != null) {
             this.brokerStatsManager.start();
         }
 
+        // 清理sendThreadPoolQueue超时任务
         if (this.brokerFastFailure != null) {
             this.brokerFastFailure.start();
         }

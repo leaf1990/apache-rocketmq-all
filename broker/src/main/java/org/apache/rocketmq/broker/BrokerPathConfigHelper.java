@@ -32,14 +32,17 @@ public class BrokerPathConfigHelper {
         brokerConfigPath = path;
     }
 
+    // rootDir = System.getProperty("user.home") + File.separator + "store";
     public static String getTopicConfigPath(final String rootDir) {
         return rootDir + File.separator + "config" + File.separator + "topics.json";
     }
 
+    // rootDir = System.getProperty("user.home") + File.separator + "store";
     public static String getConsumerOffsetPath(final String rootDir) {
         return rootDir + File.separator + "config" + File.separator + "consumerOffset.json";
     }
 
+    // rootDir = System.getProperty("user.home") + File.separator + "store";
     public static String getSubscriptionGroupPath(final String rootDir) {
         return rootDir + File.separator + "config" + File.separator + "subscriptionGroup.json";
     }

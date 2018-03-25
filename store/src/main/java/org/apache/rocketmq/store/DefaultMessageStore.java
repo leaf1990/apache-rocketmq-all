@@ -446,6 +446,7 @@ public class DefaultMessageStore implements MessageStore {
                             }
                         }
 
+                        // 记录磁盘消息延迟
                         if (diskFallRecorded) {
                             long fallBehind = maxOffsetPy - maxPhyOffsetPulling;
                             brokerStatsManager.recordDiskFallBehindSize(group, topic, queueId, fallBehind);

@@ -251,6 +251,7 @@ public class MQClientInstance {
     }
 
     private void startScheduledTask() {
+        // 如果没有设置nameServerAddress，就定时每2分钟获取一次nameServerAddress
         if (null == this.clientConfig.getNamesrvAddr()) {
             this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
@@ -265,6 +266,7 @@ public class MQClientInstance {
             }, 1000 * 10, 1000 * 60 * 2, TimeUnit.MILLISECONDS);
         }
 
+        // 定时从nameServer同步topic路由信心
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
             @Override
@@ -277,6 +279,7 @@ public class MQClientInstance {
             }
         }, 10, this.clientConfig.getPollNameServerInteval(), TimeUnit.MILLISECONDS);
 
+        // 定时维持对broker的心跳，并移除没有用的broker
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
             @Override
@@ -536,14 +539,18 @@ public class MQClientInstance {
         }
     }
 
-    public boolean updateTopicRouteInfoFromNameServer(final String topic, boolean isDefault, DefaultMQProducer defaultMQProducer) {
+    public boolean updateTopicRouteInfoFromNameServer(
+            final String topic,
+            boolean isDefault,
+            DefaultMQProducer defaultMQProducer) {
         try {
             if (this.lockNamesrv.tryLock(LOCK_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)) {
                 try {
                     TopicRouteData topicRouteData;
                     if (isDefault && defaultMQProducer != null) {
-                        topicRouteData = this.mQClientAPIImpl.getDefaultTopicRouteInfoFromNameServer(defaultMQProducer.getCreateTopicKey(),
-                            1000 * 3);
+                        topicRouteData = this.mQClientAPIImpl.getDefaultTopicRouteInfoFromNameServer(
+                                defaultMQProducer.getCreateTopicKey(),
+                                1000 * 3);
                         if (topicRouteData != null) {
                             for (QueueData data : topicRouteData.getQueueDatas()) {
                                 int queueNums = Math.min(defaultMQProducer.getDefaultTopicQueueNums(), data.getReadQueueNums());

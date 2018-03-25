@@ -27,6 +27,10 @@ import org.apache.rocketmq.common.stats.StatsItemSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * broker调用统计
+ * StatsItemSet (group_topic => StatsItem)
+ */
 public class BrokerStatsManager {
 
     public static final String TOPIC_PUT_NUMS = "TOPIC_PUT_NUMS";

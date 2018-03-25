@@ -47,6 +47,9 @@ import org.apache.rocketmq.remoting.protocol.RemotingCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * broker和nameServer的通讯
+ */
 public class BrokerOuterAPI {
     private static final Logger log = LoggerFactory.getLogger(LoggerName.BROKER_LOGGER_NAME);
     private final RemotingClient remotingClient;
@@ -97,6 +100,9 @@ public class BrokerOuterAPI {
         this.remotingClient.updateNameServerAddressList(lst);
     }
 
+    /**
+     * 想所有的nameServer注册broker,并返回masterBroker信息（必须全部成功）
+     */
     public RegisterBrokerResult registerBrokerAll(
         final String clusterName,
         final String brokerAddr,
@@ -129,6 +135,9 @@ public class BrokerOuterAPI {
         return registerBrokerResult;
     }
 
+    /**
+     * 想nameServer注册broker，返回masterBroker信息
+     */
     private RegisterBrokerResult registerBroker(
         final String namesrvAddr,
         final String clusterName,

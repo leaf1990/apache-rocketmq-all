@@ -27,6 +27,9 @@ import org.apache.rocketmq.remoting.protocol.RemotingSysResponseCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 定时清除getSendThreadPoolQueue超时的任务，减轻broker压力
+ */
 public class BrokerFastFailure {
     private static final Logger log = LoggerFactory.getLogger(LoggerName.BROKER_LOGGER_NAME);
     private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryImpl(
