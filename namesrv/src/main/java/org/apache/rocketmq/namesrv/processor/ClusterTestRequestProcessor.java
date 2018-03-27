@@ -57,6 +57,7 @@ public class ClusterTestRequestProcessor extends DefaultRequestProcessor {
 
         TopicRouteData topicRouteData = this.namesrvController.getRouteInfoManager().pickupTopicRouteData(requestHeader.getTopic());
         if (topicRouteData != null) {
+            // 获取ORDER_TOPIC_CONFIG数据，可以自定义TOPIC优先级
             String orderTopicConf =
                 this.namesrvController.getKvConfigManager().getKVConfig(NamesrvUtil.NAMESPACE_ORDER_TOPIC_CONFIG,
                     requestHeader.getTopic());

@@ -135,13 +135,13 @@ public class NamesrvStartup {
                 @Override
                 public void run() {
                     synchronized (this) {
-                        log.info("shutdown hook was invoked, " + this.shutdownTimes.incrementAndGet());
+                        log.info("shutdown hook was invoked,, " + this.shutdownTimes.incrementAndGet());
                         if (!this.hasShutdown) {
                             this.hasShutdown = true;
                             long begineTime = System.currentTimeMillis();
                             controller.shutdown();
                             long consumingTimeTotal = System.currentTimeMillis() - begineTime;
-                            log.info("shutdown hook over, consuming time total(ms): " + consumingTimeTotal);
+                            log.info("shutdown hook over,, consuming time total(ms): " + consumingTimeTotal);
                         }
                     }
                 }

@@ -64,7 +64,8 @@ public class SendMessageProcessor extends AbstractSendMessageProcessor implement
         switch (request.getCode()) {
             case RequestCode.CONSUMER_SEND_MSG_BACK:
                 return this.consumerSendMsgBack(ctx, request);
-            default:
+            default: // SEND_MESSAGE_V2  SEND_MESSAGE
+                // 解析消息Header信息
                 SendMessageRequestHeader requestHeader = parseRequestHeader(request);
                 if (requestHeader == null) {
                     return null;
@@ -238,6 +239,9 @@ public class SendMessageProcessor extends AbstractSendMessageProcessor implement
         return response;
     }
 
+    /**
+     * Broker接收消息并存盘
+     */
     private RemotingCommand sendMessage(final ChannelHandlerContext ctx, //
         final RemotingCommand request, //
         final SendMessageContext sendMessageContext, //

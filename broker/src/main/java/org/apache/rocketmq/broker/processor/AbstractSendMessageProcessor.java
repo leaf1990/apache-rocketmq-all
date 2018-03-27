@@ -74,13 +74,13 @@ public abstract class AbstractSendMessageProcessor implements NettyRequestProces
         }
         SendMessageContext mqtraceContext;
         mqtraceContext = new SendMessageContext();
-        mqtraceContext.setProducerGroup(requestHeader.getProducerGroup());
-        mqtraceContext.setTopic(requestHeader.getTopic());
-        mqtraceContext.setMsgProps(requestHeader.getProperties());
-        mqtraceContext.setBornHost(RemotingHelper.parseChannelRemoteAddr(ctx.channel()));
-        mqtraceContext.setBrokerAddr(this.brokerController.getBrokerAddr());
-        mqtraceContext.setBrokerRegionId(this.brokerController.getBrokerConfig().getRegionId());
-        mqtraceContext.setBornTimeStamp(requestHeader.getBornTimestamp());
+        mqtraceContext.setProducerGroup(requestHeader.getProducerGroup());// 生成组
+        mqtraceContext.setTopic(requestHeader.getTopic());// 消息Topic
+        mqtraceContext.setMsgProps(requestHeader.getProperties());// 消息属性
+        mqtraceContext.setBornHost(RemotingHelper.parseChannelRemoteAddr(ctx.channel()));// 消息来源Host
+        mqtraceContext.setBrokerAddr(this.brokerController.getBrokerAddr());// 消息来源Address
+        mqtraceContext.setBrokerRegionId(this.brokerController.getBrokerConfig().getRegionId());// broker分区？？
+        mqtraceContext.setBornTimeStamp(requestHeader.getBornTimestamp());// 消息时间
 
         Map<String, String> properties = MessageDecoder.string2messageProperties(requestHeader.getProperties());
         String uniqueKey = properties.get(MessageConst.PROPERTY_UNIQ_CLIENT_MESSAGE_ID_KEYIDX);

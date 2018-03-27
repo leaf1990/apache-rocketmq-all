@@ -153,8 +153,7 @@ public class RouteInfoManager {
                     //比对BrokerLiveInfo.dataVersion 和 topicConfigWrapper.getDataVersion()
                     if (this.isBrokerTopicConfigChanged(brokerAddr, topicConfigWrapper.getDataVersion())
                         || registerFirst) {
-                        ConcurrentHashMap<String, TopicConfig> tcTable =
-                            topicConfigWrapper.getTopicConfigTable();
+                        ConcurrentHashMap<String, TopicConfig> tcTable = topicConfigWrapper.getTopicConfigTable();
                         if (tcTable != null) {
                             for (Map.Entry<String, TopicConfig> entry : tcTable.entrySet()) {
                                 this.createAndUpdateQueueData(brokerName, entry.getValue());
@@ -211,8 +210,8 @@ public class RouteInfoManager {
     }
 
     /**
-     * 创建队列信息，同一个broker下的同一个topic只有一个队列
-     * TopicQueueTable<Topic, [broker queue, broker queue]>
+     * 创建队列信息，同一个broker下的同一个topic只有一个QueueData
+     * TopicQueueTable<Topic, [broker QueueData, broker QueueData]>
      */
     private void createAndUpdateQueueData(final String brokerName, final TopicConfig topicConfig) {
         QueueData queueData = new QueueData();
